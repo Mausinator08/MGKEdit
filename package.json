@@ -1,0 +1,86 @@
+{
+  "name": "mgkedit",
+  "version": "1.0.0",
+  "description": "Game editor using MGKFrameworkJS.",
+  "main": "./app/MGKEdit/src/main.js",
+  "scripts": {
+    "post-install": "electron-builder install-app-deps",
+    "dist-win": "electron-builder -p never --win",
+    "pack": "electron-builder build --dir",
+    "pre-install": "npm install",
+    "build": "tsc --build --verbose & robocopy \".\\..\\MGKFrameworkJS\\lib\\MGKFrameworkJS\" \".\\app\\MGKFrameworkJS\" /MIR",
+    "dry-build": "tsc --build --dry --verbose",
+    "clean": "tsc --build --clean & robocopy \".\\..\\MGKFrameworkJS\\lib\\MGKFrameworkJS\" \".\\app\\MGKFrameworkJS\" /PURGE /E",
+    "dry-clean": "tsc --build --clean --dry",
+    "rebuild": "tsc --build --clean & robocopy \".\\..\\MGKFrameworkJS\\lib\\MGKFrameworkJS\" \".\\app\\MGKFrameworkJS\" /PURGE /E & tsc --build --verbose & robocopy \".\\..\\MGKFrameworkJS\\lib\\MGKFrameworkJS\" \".\\app\\MGKFrameworkJS\" /MIR",
+    "watch": "tsc --build --watch --verbose & robocopy \".\\..\\MGKFrameworkJS\\lib\\MGKFrameworkJS\" \".\\app\\MGKFrameworkJS\" /MIR",
+    "start": "electron ./app/MGKEdit/src/main.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "trace": "tsc --traceResolution"
+  },
+  "repository": "https://mausinator08.visualstudio.com/MausinatorGamesKitJS/_git/MGKEdit",
+  "author": "John Patrick Maus",
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "private": false,
+  "build": {
+    "appId": "com.frovanempire.mgkedit",
+    "productName": "MGK Edit",
+    "copyright": "Copyright © 2020 Frovan Empire, all rights reserved.",
+    "win": {
+      "target": [
+        {
+          "arch": [
+            "x64",
+            "ia32"
+          ],
+          "target": "nsis"
+        }
+      ],
+      "publisherName": "Frovan Empire",
+      "publish": "github"
+    },
+    "linux": {
+      "target": [
+        {
+          "arch": [
+            "x64",
+            "ia32"
+          ],
+          "target": [
+            "AppImage",
+            "tar.gz"
+          ]
+        }
+      ]
+    },
+    "mac": {
+      "target": [
+        {
+          "arch": [
+            "x64",
+            "ia32"
+          ],
+          "target": "zip"
+        }
+      ],
+      "publish": "github"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "dmg": {
+      "icon": "./build/icon.icns"
+    }
+  },
+  "dependencies": {
+    "babylonjs": "^4.1.0",
+    "multi-ini": "^2.1.0"
+  },
+  "devDependencies": {
+    "electron": "^9.0.3",
+    "electron-builder": "^22.7.0",
+    "typescript": "^3.9.5"
+  }
+}

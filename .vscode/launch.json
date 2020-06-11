@@ -1,0 +1,73 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug main process",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/app/MGKEdit/src/main.js",
+            "stopOnEntry": false,
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
+            "runtimeArgs": [
+                ".",
+                "--enable-logging",
+                "--remote-debugging-port=9222"
+            ],
+            "env": {},
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceFolder}/app/MGKEdit/src/**/*.js",
+                "${workspaceFolder}/app/MGKFrameworkJS/src/**/*.js"
+            ],
+            "internalConsoleOptions": "openOnSessionStart",
+            "console": "integratedTerminal",
+            "skipFiles": [
+                "${workspaceFolder}/node_modules/**/*",
+                "<node_internals>/**/*"
+            ],
+            "windows": {
+                "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd",
+                "runtimeArgs": [
+                    ".",
+                    "--enable-logging",
+                    "--remote-debugging-port=9222"
+                ]
+            },
+            "preLaunchTask": "build"
+        },
+        {
+            "name": "Debug renderer process",
+            "type": "chrome",
+            "request": "attach",
+            "pathMapping": {
+                "${workspaceFolder}/app/MGKEdit/src/*.js": "${workspaceFolder}/src/*.js",
+                "${workspaceFolder}/app/MGKFrameworkJS/src/*.js": "${workspaceFolder}/../MGKFrameworkJS/src/*.js"
+            },
+            "port": 9222,
+            "url": "file:///${workspaceFolder}/index.html",
+            "sourceMaps": true,
+            "webRoot": "${workspaceFolder}",
+            "internalConsoleOptions": "openOnSessionStart",
+            "timeout": 10000,
+            "targetTypes": [
+                "page", 
+                "webview"
+            ],
+            "skipFiles": [
+                "${workspaceFolder}/node_modules/**/*",
+                "<node_internals>/**/*"
+            ]
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Debug main and renderer processes",
+            "configurations": [
+                "Debug main process",
+                "Debug renderer process"
+            ]
+        }
+    ]
+}
