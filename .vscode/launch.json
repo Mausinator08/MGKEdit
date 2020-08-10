@@ -42,13 +42,13 @@
             "type": "chrome",
             "request": "attach",
             "pathMapping": {
-                "${workspaceFolder}/app/MGKEdit/src/*.js": "${workspaceFolder}/src/*.js",
-                "${workspaceFolder}/app/MGKFrameworkJS/src/*.js": "${workspaceFolder}/../MGKFrameworkJS/src/*.js"
+                "${workspaceFolder}/app/MGKEdit/src/*.js": "${workspaceFolder}/src/*.ts",
+                "${workspaceFolder}/app/MGKFrameworkJS/src/*.js": "${workspaceFolder}/../MGKFrameworkJS/src/*.ts"
             },
             "port": 9222,
-            "url": "file:///${workspaceFolder}/index.html",
+            "url": "file:///${workspaceFolder}/app/MGKEdit/index.html",
             "sourceMaps": true,
-            "webRoot": "${workspaceFolder}",
+            "webRoot": "${workspaceFolder}/app",
             "internalConsoleOptions": "openOnSessionStart",
             "timeout": 10000,
             "targetTypes": [

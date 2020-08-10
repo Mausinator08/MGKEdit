@@ -8,12 +8,12 @@
     "dist-win": "electron-builder -p never --win",
     "pack": "electron-builder build --dir",
     "pre-install": "npm install",
-    "build": "tsc --build --verbose & robocopy \".\\..\\MGKFrameworkJS\\lib\\MGKFrameworkJS\" \".\\app\\MGKFrameworkJS\" /MIR",
+    "build": "tsc --build --verbose & xcopy \".\\index.html\" \".\\app\\MGKEdit\\\" /Y ",
     "dry-build": "tsc --build --dry --verbose",
-    "clean": "tsc --build --clean & robocopy \".\\..\\MGKFrameworkJS\\lib\\MGKFrameworkJS\" \".\\app\\MGKFrameworkJS\" /PURGE /E",
+    "clean": "tsc --build --clean & ",
     "dry-clean": "tsc --build --clean --dry",
-    "rebuild": "tsc --build --clean & robocopy \".\\..\\MGKFrameworkJS\\lib\\MGKFrameworkJS\" \".\\app\\MGKFrameworkJS\" /PURGE /E & tsc --build --verbose & robocopy \".\\..\\MGKFrameworkJS\\lib\\MGKFrameworkJS\" \".\\app\\MGKFrameworkJS\" /MIR",
-    "watch": "tsc --build --watch --verbose & robocopy \".\\..\\MGKFrameworkJS\\lib\\MGKFrameworkJS\" \".\\app\\MGKFrameworkJS\" /MIR",
+    "rebuild": "tsc --build --clean & tsc --build --verbose & xcopy \".\\index.html\" \".\\app\\MGKEdit\\\" /Y ",
+    "watch": "tsc --build --watch --verbose & xcopy \".\\index.html\" \".\\app\\MGKEdit\\\" /Y ",
     "start": "electron ./app/MGKEdit/src/main.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "trace": "tsc --traceResolution"
@@ -79,8 +79,8 @@
     "multi-ini": "^2.1.0"
   },
   "devDependencies": {
-    "electron": "^9.0.3",
-    "electron-builder": "^22.7.0",
-    "typescript": "^3.9.5"
+    "electron": "^9.2.0",
+    "electron-builder": "^22.8.0",
+    "typescript": "^3.9.7"
   }
 }
