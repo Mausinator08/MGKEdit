@@ -51,12 +51,15 @@
             "name": "Debug renderer process",
             "type": "chrome",
             "request": "attach",
-            "preLaunchTask": "build",
-            "smartStep": true,
+            "pathMapping": {
+                "${workspaceFolder}/app/MGKEdit/src/*.js": "${workspaceFolder}/src/*.ts",
+                "${workspaceFolder}/app/MGKFrameworkJS/src/*.js": "${workspaceFolder}/../MGKFrameworkJS/src/*.ts"
+            },
             "port": 9222,
             "url": "file:///${workspaceFolder}/app/MGKEdit/index.html",
             "sourceMaps": true,
             "webRoot": "${workspaceFolder}/app",
+            "internalConsoleOptions": "openOnSessionStart",
             "timeout": 10000,
             "targetTypes": [
                 "page", 

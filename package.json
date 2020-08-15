@@ -7,13 +7,13 @@
     "post-install": "electron-builder install-app-deps",
     "dist-win": "electron-builder -p never --win",
     "pack": "electron-builder build --dir",
-    "pre-install": "nvm install 14.7.0 && nvm use 14.7.0 && npm install yarn -g && yarn install",
-    "build": "tsc --build --verbose & XCOPY \".\\index.html\" \".\\app\\MGKEdit\\\" /Y",
+    "pre-install": "npm install",
+    "build": "tsc --build --verbose & xcopy \".\\index.html\" \".\\app\\MGKEdit\\\" /Y ",
     "dry-build": "tsc --build --dry --verbose",
-    "clean": "tsc --build --clean & del \".\\app\\MGKEdit\\index.html\"",
+    "clean": "tsc --build --clean & ",
     "dry-clean": "tsc --build --clean --dry",
-    "rebuild": "tsc --build --clean & del \".\\app\\MGKEdit\\index.html\" & tsc --build --verbose & XCOPY \".\\index.html\" \".\\app\\MGKEdit\\\" /Y",
-    "watch": "tsc --build --watch --verbose & XCOPY \".\\index.html\" \".\\app\\MGKEdit\\\" /Y",
+    "rebuild": "tsc --build --clean & tsc --build --verbose & xcopy \".\\index.html\" \".\\app\\MGKEdit\\\" /Y ",
+    "watch": "tsc --build --watch --verbose & xcopy \".\\index.html\" \".\\app\\MGKEdit\\\" /Y ",
     "start": "electron ./app/MGKEdit/src/main.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "trace": "tsc --traceResolution"
@@ -81,7 +81,6 @@
   "devDependencies": {
     "electron": "^9.2.0",
     "electron-builder": "^22.8.0",
-    "ts-node": "^8.10.2",
     "typescript": "^3.9.7"
   }
 }
