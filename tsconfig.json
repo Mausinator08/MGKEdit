@@ -23,9 +23,8 @@
         ]
       },
       "rootDir": "../",
-      "sourceRoot": "./../",
+      "sourceRoot": ""
     },
-    "extends": "../MGKFrameworkJS/tsconfig.base.json",
     "include": [
       "src/**/*",
       "../MGKFrameworkJS/src/**/*"

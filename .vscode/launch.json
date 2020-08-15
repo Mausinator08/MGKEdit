@@ -33,6 +33,7 @@
             "outFiles": [
                 "${workspaceFolder}/app/**/*.js"
             ],
+            "smartStep": true,
             "console": "integratedTerminal",
             "skipFiles": [
                 "${workspaceFolder}/node_modules/**/*",
@@ -58,6 +59,10 @@
             "port": 9222,
             "url": "file:///${workspaceFolder}/app/MGKEdit/index.html",
             "sourceMaps": true,
+            "outFiles": [
+                "${workspaceFolder}/app/**/*.js"
+            ],
+            "smartStep": true,
             "webRoot": "${workspaceFolder}/app",
             "internalConsoleOptions": "openOnSessionStart",
             "timeout": 10000,
