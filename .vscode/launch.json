@@ -1,5 +1,15 @@
 {
     "version": "0.2.0",
+    "compounds": [
+        {
+            "name": "Debug MGKEdit",
+            "configurations": [
+                "Debug main process",
+                "Debug renderer process",
+            ],
+            "preLaunchTask": "build"
+        }
+    ],
     "configurations": [
         {
             "name": "Debug main process",
@@ -7,21 +17,22 @@
             "request": "launch",
             "program": "${workspaceFolder}/app/MGKEdit/src/main.js",
             "stopOnEntry": false,
-            "args": [],
-            "cwd": "${workspaceFolder}",
-            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
-            "runtimeArgs": [
-                ".",
-                "--enable-logging",
-                "--remote-debugging-port=9222"
+            "args": [
+                "${workspaceFolder}/src/**/*.ts",
+                "${workspaceFolder}/../MGKFrameworkJS/src/**/*.ts"
             ],
-            "env": {},
+            "runtimeArgs": [
+                "--enable-logging",
+                "--remote-debugging-port=9222",
+                "--debug=5858"
+            ],
+            "cwd": "${workspaceFolder}/app",
+            "protocol": "inspector",
+            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
             "sourceMaps": true,
             "outFiles": [
-                "${workspaceFolder}/app/MGKEdit/src/**/*.js",
-                "${workspaceFolder}/app/MGKFrameworkJS/src/**/*.js"
+                "${workspaceFolder}/app/**/*.js"
             ],
-            "internalConsoleOptions": "openOnSessionStart",
             "console": "integratedTerminal",
             "skipFiles": [
                 "${workspaceFolder}/node_modules/**/*",
@@ -30,26 +41,22 @@
             "windows": {
                 "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd",
                 "runtimeArgs": [
-                    ".",
                     "--enable-logging",
-                    "--remote-debugging-port=9222"
+                    "--remote-debugging-port=9222",
+                    "--debug=5858"
                 ]
-            },
-            "preLaunchTask": "build"
+            }
         },
         {
             "name": "Debug renderer process",
             "type": "chrome",
             "request": "attach",
-            "pathMapping": {
-                "${workspaceFolder}/app/MGKEdit/src/*.js": "${workspaceFolder}/src/*.js",
-                "${workspaceFolder}/app/MGKFrameworkJS/src/*.js": "${workspaceFolder}/../MGKFrameworkJS/src/*.js"
-            },
+            "preLaunchTask": "build",
+            "smartStep": true,
             "port": 9222,
-            "url": "file:///${workspaceFolder}/index.html",
+            "url": "file:///${workspaceFolder}/app/MGKEdit/index.html",
             "sourceMaps": true,
-            "webRoot": "${workspaceFolder}",
-            "internalConsoleOptions": "openOnSessionStart",
+            "webRoot": "${workspaceFolder}/app",
             "timeout": 10000,
             "targetTypes": [
                 "page", 
@@ -58,15 +65,6 @@
             "skipFiles": [
                 "${workspaceFolder}/node_modules/**/*",
                 "<node_internals>/**/*"
-            ]
-        }
-    ],
-    "compounds": [
-        {
-            "name": "Debug main and renderer processes",
-            "configurations": [
-                "Debug main process",
-                "Debug renderer process"
             ]
         }
     ]

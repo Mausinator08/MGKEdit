@@ -1,7 +1,7 @@
 import { Renderer } from "./../../../MGKFrameworkJS/src/components/renderer.js";
 import { GameCore, OnDOMContentLoaded } from "./../../../MGKFrameworkJS/src/game/game-core.js";
 import { MGKEditLogic } from "./../editor-logic/MGKEdit-Logic.js";
-import { BrowserWindow, remote } from "electron";
+import { remote, BrowserWindow } from "electron";
 
 // GameCore calls this. Make sure to assign it to this.preInitFunc.
 function PreInit(game: MGKEdit): boolean {

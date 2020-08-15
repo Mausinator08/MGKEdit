@@ -14,7 +14,6 @@ function createWindow(): void {
     mainWindow = new BrowserWindow({
         webPreferences: {
             nodeIntegration: true,
-            webSecurity: false,
             enableRemoteModule: true
         },
         minWidth: 800,
@@ -25,7 +24,7 @@ function createWindow(): void {
 
     // Load index.html for the main window.
     mainWindow.loadURL(url.format({
-        pathname: path.join(__dirname, "../../../index.html"),
+        pathname: path.join(__dirname, "../index.html"),
         protocol: "file:",
         slashes: true,
     }));

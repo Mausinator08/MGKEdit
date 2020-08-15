@@ -23,13 +23,12 @@
         ]
       },
       "rootDir": "../",
-      "sourceRoot": "./../"
+      "sourceRoot": "./../",
     },
-    "references": [
-        { "path": "../MGKFrameworkJS", "prepend": false }
-    ],
+    "extends": "../MGKFrameworkJS/tsconfig.base.json",
     "include": [
-      "src/**/*"
+      "src/**/*",
+      "../MGKFrameworkJS/src/**/*"
     ],
     "types": [
         "babylonjs"
