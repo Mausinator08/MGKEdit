@@ -56,12 +56,12 @@
                 "${workspaceFolder}/app/MGKEdit/src/*.js": "${workspaceFolder}/src/*.ts",
                 "${workspaceFolder}/app/MGKFrameworkJS/src/*.js": "${workspaceFolder}/../MGKFrameworkJS/src/*.ts"
             },
-            "port": 9222,
-            "url": "file:///${workspaceFolder}/app/MGKEdit/index.html",
-            "sourceMaps": true,
             "outFiles": [
                 "${workspaceFolder}/app/**/*.js"
             ],
+            "port": 9222,
+            "url": "file:///${workspaceFolder}/app/MGKEdit/content/index.html",
+            "sourceMaps": true,
             "smartStep": true,
             "webRoot": "${workspaceFolder}/app",
             "internalConsoleOptions": "openOnSessionStart",

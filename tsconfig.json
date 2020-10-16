@@ -1,35 +1,36 @@
 {
-    "compilerOptions": {
-      "composite": true,
-      "declaration": true,
-      "declarationMap": true,
-      "target": "es6",
-      "module": "commonjs",
-      "moduleResolution": "node",
-      "lib": [
-        "es6",
-        "dom"
-      ],
-      "noImplicitAny": true,
-      "inlineSourceMap": true,
-      "inlineSources": true,
-      "outDir": "app",
-      "baseUrl": ".",
-      "paths": {
-        "*": [
-          "*",
-          "node_modules/*",
-          "../MGKFrameworkJS/*"
-        ]
-      },
-      "rootDir": "../",
-      "sourceRoot": ""
-    },
-    "include": [
-      "src/**/*",
-      "../MGKFrameworkJS/src/**/*"
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "target": "es6",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "lib": [
+      "es6",
+      "dom"
     ],
-    "types": [
-        "babylonjs"
-    ]
+    "noImplicitAny": true,
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "outDir": "app",
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "*",
+        "node_modules/*",
+        "../MGKFrameworkJS/*"
+      ]
+    },
+    "rootDir": "../",
+    "sourceRoot": "G:\\Workspaces\\MGKEdit\\..\\"
+  },
+  "include": [
+    "src/**/*",
+    "../MGKFrameworkJS/src/**/*",
+    "../MGKFrameworkJS/utilities"
+  ],
+  "types": [
+    "babylonjs"
+  ]
 }

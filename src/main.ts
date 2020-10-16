@@ -1,12 +1,18 @@
+//#region Imports
 import { app, BrowserWindow } from "electron";
 import * as path from "path";
 import * as url from "url";
+
 // Uncomment the following line later when ini settings files are being used.
 // import * as ini from "multi-ini";
+//#endregion
 
+//#region Globals
 // The main window to render the game to. Probably the only one as well.
 let mainWindow: Electron.BrowserWindow;
+//#endregion
 
+//#region Method Exports
 // Create a window...
 function createWindow(): void {
     // Will use "multi-ini" later to retrieve user's system settings and apply
@@ -15,17 +21,18 @@ function createWindow(): void {
         webPreferences: {
             nodeIntegration: true,
             enableRemoteModule: true,
-            devTools: false
+            devTools: true,
         },
         minWidth: 800,
         minHeight: 600,
         width: 1280,
-        height: 720
+        height: 720,
+        title: "MGK Edit"
     });
 
     // Load index.html for the main window.
     mainWindow.loadURL(url.format({
-        pathname: path.join(__dirname, "../index.html"),
+        pathname: path.join(__dirname, "/../content/index.html"),
         protocol: "file:",
         slashes: true,
     }));
@@ -43,7 +50,9 @@ function createWindow(): void {
         mainWindow = null;
     });
 }
+//#endregion
 
+//#region Global Executions
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -68,3 +77,4 @@ app.on("activate", () => {
 
 // That's all for now.
 // More code may be added below as project grows.
+//#endregion

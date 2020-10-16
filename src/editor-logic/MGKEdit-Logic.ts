@@ -1,7 +1,11 @@
+//#region Imports
 import { GameCore } from "./../../../MGKFrameworkJS/src/game/game-core.js";
-import { HumanView } from "./../../../MGKFrameworkJS/src/game-views/human-view.js";
+import { HumanView } from "./../../../MGKFrameworkJS/src/game-views/types/human-view.js";
 import { BaseGameLogic } from "./../../../MGKFrameworkJS/src/game-logic/base-game-logic.js";
+import { Renderer } from "./../../../MGKFrameworkJS/src/components/types/renderer.js";
+//#endregion
 
+//#region MGKEditLogic Global Methods
 function LogicPreInit(logic: MGKEditLogic): boolean {
     try {
         // Initialize non human views here:
@@ -24,13 +28,14 @@ function LogicPreInit(logic: MGKEditLogic): boolean {
         return false;
     }
 }
+//#endregion
 
 export class MGKEditLogic extends BaseGameLogic {
-
     constructor() {
-        super(__dirname + "/../game-views");
+        super(__dirname + "/../editor-views/", __dirname + "/../editor-states/");
     }
 
+    //#region Control Method Overrides
     public VInit(): boolean {
         // #####
         // ### Do NOT create ANY views right here just yet in case this is not a server, because even though human views need to be updated (rendered) last, it will be the first item created in array and found first!
@@ -92,4 +97,5 @@ export class MGKEditLogic extends BaseGameLogic {
     public VShutdown(): void {
         super.VShutdown();
     }
+    //#endregion
 }

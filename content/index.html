@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>MGK Edit</title>
+    <style>
+        html,
+        body {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .page-static {
+            min-width: 100%;
+            max-width: 100%;
+        }
+
+        .ui-static {
+            background-color: transparent;
+            z-index: 1;
+            min-width: 100%;
+            max-width: 100%;
+            position: absolute;
+        }
+
+        .ui-splash {
+            background-color: rgba(80, 80, 80, 75);
+            left: 25%;
+            top: 35%;
+            width: 50%;
+            height: 30%;
+            position: fixed;
+        }
+
+        .ui-system-dialog-popup {
+            background-color: rgba(0, 0, 0, 255);
+            left: 25%;
+            top: 35%;
+            width: 50%;
+            height: 30%;
+            position: fixed;
+            text-align: center;
+        }
+
+        .canvas-static-with-overlay {
+            z-index: 0;
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+            position: fixed;
+        }
+
+        .mgk-edit-title {
+            color: red;
+            text-align: center;
+        }
+
+        .mgk-edit-slogan {
+            color: white;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-static">
+        <div>
+            <canvas id="render-canvas" class="canvas-static-with-overlay"></canvas>
+        </div>
+        <div id="mgk-ui-static" class="ui-static">
+            <div id="mgk-splash-screen" class="ui-splash">
+                <h1 class="mgk-edit-title">MGK Edit</h1>
+                <h2 class="mgk-edit-slogan">"Let the games begin!"</h2>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        var exports = {"__esModule": true};
+    </script>
+    <script>
+        const game = require('./../src/editor/MGKEdit.js');
+    </script>
+</body>
+</html>
