@@ -1,38 +1,15 @@
 'use strict';
 
 //#region Required Scripts
-const { readdir } = require("fs").promises;
-const { readFileSync, writeFileSync, mkdirSync, mkdir } = require("fs");
-const escapeRegExp = require("./../MGKFrameworkJS/misc/escape-regexp.js");
-//#endregion
-
-//#region Methods
-async function* getFiles(root, dir) {
-    const dirents = await readdir(dir, { encoding: "utf-8", withFileTypes: true });
-    for (const dirent of dirents) {
-        const res = dir + "\\" + dirent.name;
-        if (dirent.isDirectory() === true) {
-            const obj = await getFiles(root, res);
-            yield* {
-                fullFile: obj.fullFile,
-                path: obj.path,
-                fileName: obj.fileName
-            };
-        } else {
-            const regex = new RegExp(escapeRegExp(root), "g");
-            yield {
-                fullFile: res,
-                path: dir.replace(regex, ""),
-                fileName: dirent.name
-            };
-        }
-    }
-};
+const { readFileSync, writeFileSync, mkdirSync } = require("fs");
+const getFiles = require("./../MGKFrameworkJS/misc/get-files-recursively.js");
 //#endregion
 
 //#region Default Action upon require
 (async () => {
-    for await (const f of getFiles(__dirname + '\\content', __dirname + '\\content')) {
+    var files = await getFiles.recurse(__dirname + '\\content', __dirname + '\\content');
+
+    for (const f of files) {
         try {
             const fileData = readFileSync(f.fullFile, { encoding: "utf-8" });
             mkdirSync(__dirname + "\\app\\MGKEdit\\content" + f.path, { recursive: true });

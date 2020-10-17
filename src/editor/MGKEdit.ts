@@ -1,7 +1,9 @@
+/** @module editor */
+
 //#region Imports
-import { Renderer } from "./../../../MGKFrameworkJS/src/components/types/renderer.js";
-import { GameCore, OnDOMContentLoaded } from "./../../../MGKFrameworkJS/src/game/game-core.js";
-import { MGKEditLogic } from "./../editor-logic/MGKEdit-Logic.js";
+import { Renderer } from "./../../../MGKFrameworkJS/src/components/types/renderer";
+import { GameCore, OnDOMContentLoaded } from "./../../../MGKFrameworkJS/src/game/game-core";
+import { MGKEditLogic } from "./../editor-logic/MGKEdit-Logic";
 import { remote, BrowserWindow } from "electron";
 //#endregion
 
@@ -65,12 +67,30 @@ function PreInit(game: MGKEdit): boolean {
 //#endregion
 
 // Main game class
+/**
+ *
+ *
+ * @export
+ * @class MGKEdit
+ * @extends {GameCore}
+ */
 export class MGKEdit extends GameCore {
+    /**
+     * Creates an instance of MGKEdit.
+     * @param {string} _canvasElement
+     * @memberof MGKEdit
+     */
     constructor(_canvasElement: string) {
         super(_canvasElement, __dirname + "/../components/", new MGKEditLogic());
     }
 
     //#region Control Method Overrides
+    /**
+     *
+     *
+     * @return {*}  {boolean}
+     * @memberof MGKEdit
+     */
     public VInit(): boolean {
         if (this.reInit === true) {
             // Create componets here:
@@ -87,10 +107,20 @@ export class MGKEdit extends GameCore {
         return super.VInit();
     }
 
+    /**
+     *
+     *
+     * @memberof MGKEdit
+     */
     public VUpdate(): void {
         super.VUpdate();
     }
 
+    /**
+     *
+     *
+     * @memberof MGKEdit
+     */
     public VShutdown(): void {
         if (this.exitting === true) {
             let uiStatic: HTMLElement = document.getElementById("mgk-ui-static");

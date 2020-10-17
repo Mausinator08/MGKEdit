@@ -1,8 +1,10 @@
+/** @module editor-logic */
+
 //#region Imports
-import { GameCore } from "./../../../MGKFrameworkJS/src/game/game-core.js";
-import { HumanView } from "./../../../MGKFrameworkJS/src/game-views/types/human-view.js";
-import { BaseGameLogic } from "./../../../MGKFrameworkJS/src/game-logic/base-game-logic.js";
-import { Renderer } from "./../../../MGKFrameworkJS/src/components/types/renderer.js";
+import { GameCore } from "./../../../MGKFrameworkJS/src/game/game-core";
+import { HumanView } from "./../../../MGKFrameworkJS/src/game-views/types/human-view";
+import { BaseGameLogic } from "./../../../MGKFrameworkJS/src/game-logic/base-game-logic";
+import { Renderer } from "./../../../MGKFrameworkJS/src/components/types/renderer";
 //#endregion
 
 //#region MGKEditLogic Global Methods
@@ -30,12 +32,29 @@ function LogicPreInit(logic: MGKEditLogic): boolean {
 }
 //#endregion
 
+/**
+ *
+ *
+ * @export
+ * @class MGKEditLogic
+ * @extends {BaseGameLogic}
+ */
 export class MGKEditLogic extends BaseGameLogic {
+    /**
+     * Creates an instance of MGKEditLogic.
+     * @memberof MGKEditLogic
+     */
     constructor() {
         super(__dirname + "/../editor-views/", __dirname + "/../editor-states/");
     }
 
     //#region Control Method Overrides
+    /**
+     *
+     *
+     * @return {*}  {boolean}
+     * @memberof MGKEditLogic
+     */
     public VInit(): boolean {
         // #####
         // ### Do NOT create ANY views right here just yet in case this is not a server, because even though human views need to be updated (rendered) last, it will be the first item created in array and found first!
@@ -55,6 +74,12 @@ export class MGKEditLogic extends BaseGameLogic {
         return super.VInit();
     }
 
+    /**
+     *
+     *
+     * @return {*}  {void}
+     * @memberof MGKEditLogic
+     */
     public VUpdate(): void {
         // Do not continue any further if we are not initialized or the game logic is paused.
         if (this.paused === true || this.isInitialized === false) {
@@ -94,6 +119,11 @@ export class MGKEditLogic extends BaseGameLogic {
         super.VUpdate();
     }
 
+    /**
+     *
+     *
+     * @memberof MGKEditLogic
+     */
     public VShutdown(): void {
         super.VShutdown();
     }

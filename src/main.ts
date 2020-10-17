@@ -1,3 +1,5 @@
+/** @module main */
+
 //#region Imports
 import { app, BrowserWindow } from "electron";
 import * as path from "path";
@@ -8,12 +10,16 @@ import * as url from "url";
 //#endregion
 
 //#region Globals
-// The main window to render the game to. Probably the only one as well.
+/** The main window to render the game to. Probably the only one as well. */
 let mainWindow: Electron.BrowserWindow;
 //#endregion
 
 //#region Method Exports
 // Create a window...
+/**
+ *
+ *
+ */
 function createWindow(): void {
     // Will use "multi-ini" later to retrieve user's system settings and apply
     // the settings for the window to below.

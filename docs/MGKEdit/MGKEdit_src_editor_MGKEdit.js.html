@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: MGKEdit/src/editor/MGKEdit.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: MGKEdit/src/editor/MGKEdit.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+/** @module editor */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MGKEdit = void 0;
+const game_core_1 = require("./../../../MGKFrameworkJS/src/game/game-core");
+const MGKEdit_Logic_1 = require("./../editor-logic/MGKEdit-Logic");
+//#endregion
+//#region MGKEdit Global Methods
+// GameCore calls this. Make sure to assign it to this.preInitFunc.
+function PreInit(game) {
+    try {
+        // Pre-Initialization
+        for (let s of game.createdComponents) {
+            let success = JSON.parse(s);
+            if (success.code === "exists" || success.code === "error") {
+                console.error("GameCore: VInit() -> Failed to initialize [" + success.comName + "] component!");
+                switch (success.comName) {
+                    case "babylon-js": {
+                        // Renderer not supported... games need graphics!!!
+                        return false;
+                        break;
+                    }
+                    default: {
+                        // Component name does not match the created component
+                        console.error("The component with the name [" + success.comName + "] did not initialize but is optional.");
+                    }
+                }
+                // Assume if at this point the failed components were optional.
+                return true;
+            }
+            if (success.code === "created") {
+                // Configure the created components in their appropriate case "name": {}
+                // This happens BEFORE the actual component is initialized with VInit().
+                switch (success.comName) {
+                    case "babylon-js": {
+                        // Renderer
+                        game.comMan.GetByName("babylon-js").SetCanvas(this._canvas);
+                        game.comMan.GetByName("babylon-js").SetGameCore(this);
+                        // Ready to turn the power on for rendering and updating game components!
+                        // Crank the game with the initial update.
+                        game.comMan.GetByName("babylon-js").StartRendering();
+                        // This will update all components one time, but if the renderer for babylon-js is created in comMan then the game's VUpdate() will continuously call
+                        // in the babylon runRenderLoop() function as well as all the other components. The renderer's runLoop member must be set to true in the game class with
+                        // &lt;DerivedClassNameFromThisBaseClass>.StartRendering();                                
+                        break;
+                    }
+                    default: {
+                        // Component name does not match the created component
+                        console.error("The component with the name [" + success.comName + "] does not exist or does not match the name of the component created!");
+                    }
+                }
+            }
+        }
+        return true;
+    }
+    catch (err) {
+        console.error("GameCore: VInit() -> PreInit() -> ### ERROR:\n" + JSON.stringify(err, null, 2));
+        return false;
+    }
+}
+//#endregion
+// Main game class
+/**
+ *
+ *
+ * @export
+ * @class MGKEdit
+ * @extends {GameCore}
+ */
+class MGKEdit extends game_core_1.GameCore {
+    /**
+     * Creates an instance of MGKEdit.
+     * @param {string} _canvasElement
+     * @memberof MGKEdit
+     */
+    constructor(_canvasElement) {
+        super(_canvasElement, __dirname + "/../components/", new MGKEdit_Logic_1.MGKEditLogic());
+    }
+    //#region Control Method Overrides
+    /**
+     *
+     *
+     * @return {*}  {boolean}
+     * @memberof MGKEdit
+     */
+    VInit() {
+        if (this.reInit === true) {
+            // Create componets here:
+            if (this.createdComponents.length === 0) {
+                this.createdComponents.push(this.comMan.Create("babylon-js", "renderer")); // This one needs to be last!
+            }
+            // Assign the pre init function so that GameCore can call it before calling comMan.Init();
+            if (this.preInitFunc === null) {
+                this.preInitFunc = PreInit;
+            }
+        }
+        return super.VInit();
+    }
+    /**
+     *
+     *
+     * @memberof MGKEdit
+     */
+    VUpdate() {
+        super.VUpdate();
+    }
+    /**
+     *
+     *
+     * @memberof MGKEdit
+     */
+    VShutdown() {
+        if (this.exitting === true) {
+            let uiStatic = document.getElementById("mgk-ui-static");
+            if (!document.getElementById("quitPrompt")) {
+                uiStatic.appendChild(this.QuitPrompt());
+            }
+        }
+        else {
+            if (document.getElementById("quitPrompt")) {
+                document.getElementById("quitPrompt").remove();
+            }
+        }
+        super.VShutdown();
+    }
+}
+exports.MGKEdit = MGKEdit;
+//#region Game Engine Entry Point Call
+game_core_1.OnDOMContentLoaded(function () {
+    // Create the game using the 'renderCanvas'.
+    let game = new MGKEdit('render-canvas');
+    game_core_1.GameCore.SetGameType(game);
+    // Initialize the game and all of its components
+    if (!game.VInit()) {
+        let splashScreen = document.getElementById("mgk-splash-screen");
+        let uiStatic = document.getElementById("mgk-ui-static");
+        uiStatic.removeChild(splashScreen);
+        uiStatic.appendChild(game.Fatal("Could not initialize editor!", function (event) {
+            game.Quit();
+        }, 1));
+    }
+    let splashScreen = document.getElementById("mgk-splash-screen");
+    let uiStatic = document.getElementById("mgk-ui-static");
+    uiStatic.removeChild(splashScreen);
+});
+//#endregion
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiTUdLRWRpdC5qcyIsInNvdXJjZVJvb3QiOiJHOi9Xb3Jrc3BhY2VzL01HS0VkaXQvLi4vIiwic291cmNlcyI6WyJNR0tFZGl0L3NyYy9lZGl0b3IvTUdLRWRpdC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiO0FBQUEscUJBQXFCOzs7QUFJckIsNEVBQTRGO0FBQzVGLG1FQUErRDtBQUUvRCxZQUFZO0FBRVosZ0NBQWdDO0FBQ2hDLG1FQUFtRTtBQUNuRSxTQUFTLE9BQU8sQ0FBQyxJQUFhO0lBQzFCLElBQUk7UUFDQSxxQkFBcUI7UUFDckIsS0FBSyxJQUFJLENBQUMsSUFBSSxJQUFJLENBQUMsaUJBQWlCLEVBQUU7WUFDbEMsSUFBSSxPQUFPLEdBQVEsSUFBSSxDQUFDLEtBQUssQ0FBQyxDQUFDLENBQUMsQ0FBQztZQUNqQyxJQUFJLE9BQU8sQ0FBQyxJQUFJLEtBQUssUUFBUSxJQUFJLE9BQU8sQ0FBQyxJQUFJLEtBQUssT0FBTyxFQUFFO2dCQUN2RCxPQUFPLENBQUMsS0FBSyxDQUFDLDZDQUE2QyxHQUFHLE9BQU8sQ0FBQyxPQUFPLEdBQUcsY0FBYyxDQUFDLENBQUM7Z0JBQ2hHLFFBQU8sT0FBTyxDQUFDLE9BQU8sRUFBRTtvQkFDcEIsS0FBSyxZQUFZLENBQUMsQ0FBQzt3QkFDZixtREFBbUQ7d0JBQ25ELE9BQU8sS0FBSyxDQUFDO3dCQUNiLE1BQU07cUJBQ1Q7b0JBRUQsT0FBTyxDQUFDLENBQUM7d0JBQ0wsc0RBQXNEO3dCQUN0RCxPQUFPLENBQUMsS0FBSyxDQUFDLCtCQUErQixHQUFHLE9BQU8sQ0FBQyxPQUFPLEdBQUcsdUNBQXVDLENBQUMsQ0FBQztxQkFDOUc7aUJBQ0o7Z0JBRUQsK0RBQStEO2dCQUMvRCxPQUFPLElBQUksQ0FBQzthQUNmO1lBRUQsSUFBSSxPQUFPLENBQUMsSUFBSSxLQUFLLFNBQVMsRUFBRTtnQkFDNUIsd0VBQXdFO2dCQUN4RSx3RUFBd0U7Z0JBQ3hFLFFBQU8sT0FBTyxDQUFDLE9BQU8sRUFBRTtvQkFDcEIsS0FB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QyxlQUFlLENBQUMsQ0FBQztJQUVqRCxvQkFBUSxDQUFDLFdBQVcsQ0FBVSxJQUFJLENBQUMsQ0FBQztJQUVwQyxnREFBZ0Q7SUFDaEQsSUFBSSxDQUFDLElBQUksQ0FBQyxLQUFLLEVBQUUsRUFBRTtRQUNmLElBQUksWUFBWSxHQUFnQixRQUFRLENBQUMsY0FBYyxDQUFDLG1CQUFtQixDQUFDLENBQUM7UUFDN0UsSUFBSSxRQUFRLEdBQWdCLFFBQVEsQ0FBQyxjQUFjLENBQUMsZUFBZSxDQUFDLENBQUM7UUFDckUsUUFBUSxDQUFDLFdBQVcsQ0FBQyxZQUFZLENBQUMsQ0FBQztRQUVuQyxRQUFRLENBQUMsV0FBVyxDQUFDLElBQUksQ0FBQyxLQUFLLENBQzNCLDhCQUE4QixFQUM5QixVQUFVLEtBQWlCO1lBQ3ZCLElBQUksQ0FBQyxJQUFJLEVBQUUsQ0FBQztRQUNoQixDQUFDLEVBQ0QsQ0FBQyxDQUNKLENBQUMsQ0FBQztLQUNOO0lBRUQsSUFBSSxZQUFZLEdBQWdCLFFBQVEsQ0FBQyxjQUFjLENBQUMsbUJBQW1CLENBQUMsQ0FBQztJQUM3RSxJQUFJLFFBQVEsR0FBZ0IsUUFBUSxDQUFDLGNBQWMsQ0FBQyxlQUFlLENBQUMsQ0FBQztJQUNyRSxRQUFRLENBQUMsV0FBVyxDQUFDLFlBQVksQ0FBQyxDQUFDO0FBQ3ZDLENBQUMsQ0FBQyxDQUFDO0FBQ0gsWUFBWSIsInNvdXJjZXNDb250ZW50IjpbIi8qKiBAbW9kdWxlIGVkaXRvciAqL1xyXG5cclxuLy8jcmVnaW9uIEltcG9ydHNcclxuaW1wb3J0IHsgUmVuZGVyZXIgfSBmcm9tIFwiLi8uLi8uLi8uLi9NR0tGcmFtZXdvcmtKUy9zcmMvY29tcG9uZW50cy90eXBlcy9yZW5kZXJlclwiO1xyXG5pbXBvcnQgeyBHYW1lQ29yZSwgT25ET01Db250ZW50TG9hZGVkIH0gZnJvbSBcIi4vLi4vLi4vLi4vTUdLRnJhbWV3b3JrSlMvc3JjL2dhbWUvZ2FtZS1jb3JlXCI7XHJcbmltcG9ydCB7IE1HS0VkaXRMb2dpYyB9IGZyb20gXCIuLy4uL2VkaXRvci1sb2dpYy9NR0tFZGl0LUxvZ2ljXCI7XHJcbmltcG9ydCB7IHJlbW90ZSwgQnJvd3NlcldpbmRvdyB9IGZyb20gXCJlbGVjdHJvblwiO1xyXG4vLyNlbmRyZWdpb25cclxuXHJcbi8vI3JlZ2lvbiBNR0tFZGl0IEdsb2JhbCBNZXRob2RzXHJcbi8vIEdhbWVDb3JlIGNhbGxzIHRoaXMuIE1ha2Ugc3VyZSB0byBhc3NpZ24gaXQgdG8gdGhpcy5wcmVJbml0RnVuYy5cclxuZnVuY3Rpb24gUHJlSW5pdChnYW1lOiBNR0tFZGl0KTogYm9vbGVhbiB7XHJcbiAgICB0cnkge1xyXG4gICAgICAgIC8vIFByZS1Jbml0aWFsaXphdGlvblxyXG4gICAgICAgIGZvciAobGV0IHMgb2YgZ2FtZS5jcmVhdGVkQ29tcG9uZW50cykge1xyXG4gICAgICAgICAgICBsZXQgc3VjY2VzczogYW55ID0gSlNPTi5wYXJzZShzKTtcclxuICAgICAgICAgICAgaWYgKHN1Y2Nlc3MuY29kZSA9PT0gXCJleGlzdHNcIiB8fCBzdWNjZXNzLmNvZGUgPT09IFwiZXJyb3JcIikge1xyXG4gICAgICAgICAgICAgICAgY29uc29sZS5lcnJvcihcIkdhbWVDb3JlOiBWSW5pdCgpIC0+IEZhaWxlZCB0byBpbml0aWFsaXplIFtcIiArIHN1Y2Nlc3MuY29tTmFtZSArIFwiXSBjb21wb25lbnQhXCIpO1xyXG4gICAgICAgICAgICAgICAgc3dpdGNoKHN1Y2Nlc3MuY29tTmFtZSkge1xyXG4gICAgICAgICAgICAgICAgICAgIGNhc2UgXCJiYWJ5bG9uLWpzXCI6IHtcclxuICAgICAgICAgICAgICAgICAgICAgICAgLy8gUmVuZGVyZXIgbm90IHN1cHBvcnRlZC4uLiBnYW1lcyBuZWVkIGdyYXBoaWNzISEhXHJcbiAgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiBmYWxzZTsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFxyXG4gICAgICAgICAgICAgICAgICAgICAgICBicmVhaztcclxuICAgICAgICAgICAgICAgICAgICB9XHJcblxyXG4gICAgICAgICAgICAgICAgICAgIGRlZmF1bHQ6IHtcclxuICAgICAgICAgICAgICAgICAgICAgICAgLy8gQ29tcG9uZW50IG5hbWUgZG9lcyBub3QgbWF0Y2ggdGhlIGNyZWF0ZWQgY29tcG9uZW50XHJcbiAgICAgICAgICAgICAgICAgICAgICAgIGNvbnNvbGUuZXJyb3IoXCJUaGUgY29tcG9uZW50IHdpdGggdGhlIG5hbWUgW1wiICsgc3VjY2Vzcy5jb21OYW1lICsgXCJdIGRpZCBub3QgaW5pdGlhbGl6ZSBidXQgaXMgb3B0aW9uYWwuXCIpO1xyXG4gICAgICAgICAgICAgICAgICAgIH1cclxuICAgICAgICAgICAgICAgIH1cclxuXHJcbiAgICAgICAgICAgICAgICAvLyBBc3N1bWUgaWYgYXQgdGhpcyBwb2ludCB0aGUgZmFpbGVkIGNvbXBvbmVudHMgd2VyZSBvcHRpb25hbC5cclxuICAgICAgICAgICAgICAgIHJldHVybiB0cnVlO1xyXG4gICAgICAgICAgICB9XHJcblxyXG4gICAgICAgICAgICBpZiAoc3VjY2Vzcy5jb2RlID09PSBcImNyZWF0ZWRcIikge1xyXG4gICAgICAgICAgICAgICAgLy8gQ29uZmlndXJlIHRoZSBjcmVhdGVkIGNvbXBvbmVudHMgaW4gdGhlaXIgYXBwcm9wcmlhdGUgY2FzZSBcIm5hbWVcIjoge31cclxuICAgICAgICAgICAgICAgIC8vIFRoaXMgaGFwcGVucyBCRUZPUkUgdGhlIGFjdHVhbCBjb21wb25lbnQgaXMgaW5pdGlhbGl6ZWQgd2l0aCBWSW5pdCgpLlxyXG4gICAgICAgICAgICAgICAgc3dpdGNoKHN1Y2Nlc3MuY29tTmFtZSkge1xyXG4gICAgICAgICAgICAgICAgICAgIGNhc2UgXCJiYWJ5bG9uLWpzXCI6IHtcclxuICAgICAgICAgICAgICAgICAgICAgICAgLy8gUmVuZGVyZXJcclxuICAgICAgICAgICAgICAgICAgICAgICAgZ2FtZS5jb21NYW4uR2V0QnlOYW1lPFJlbmRlcmVyPihcImJhYnlsb24tanNcIikuU2V0Q2FudmFzKHRoaXMuX2NhbnZhcyk7XHJcbiAgICAgICAgICAgICAgICAgICAgICAgIGdhbWUuY29tTWFuLkdldEJ5TmFtZTxSZW5kZXJlcj4oXCJiYWJ5bG9uLWpzXCIpLlNldEdhbWVDb3JlKHRoaXMpO1xyXG4gICAgICAgICAgICAgICAgICAgICAgICAvLyBSZWFkeSB0byB0dXJuIHRoZSBwb3dlciBvbiBmb3IgcmVuZGVyaW5nIGFuZCB1cGRhdGluZyBnYW1lIGNvbXBvbmVudHMhXHJcbiAgICAgICAgICAgICAgICAgICAgICAgIC8vIENyYW5rIHRoZSBnYW1lIHdpdGggdGhlIGluaXRpYWwgdXBkYXRlLlxyXG4gICAgICAgICAgICAgICAgICAgICAgICBnYW1lLmNvbU1hbi5HZXRCeU5hbWU8UmVuZGVyZXI+KFwiYmFieWxvbi1qc1wiKS5TdGFydFJlbmRlcmluZygpO1xyXG4gICAgICAgICAgICAgICAgICAgICAgICAvLyBUaGlzIHdpbGwgdXBkYXRlIGFsbCBjb21wb25lbnRzIG9uZSB0aW1lLCBidXQgaWYgdGhlIHJlbmRlcmVyIGZvciBiYWJ5bG9uLWpzIGlzIGNyZWF0ZWQgaW4gY29tTWFuIHRoZW4gdGhlIGdhbWUncyBWVXBkYXRlKCkgd2lsbCBjb250aW51b3VzbHkgY2FsbFxyXG4gICAgICAgICAgICAgICAgICAgICAgICAvLyBpbiB0aGUgYmFieWxvbiBydW5SZW5kZXJMb29wKCkgZnVuY3Rpb24gYXMgd2VsbCBhcyBhbGwgdGhlIG90aGVyIGNvbXBvbmVudHMuIFRoZSByZW5kZXJlcidzIHJ1bkxvb3AgbWVtYmVyIG11c3QgYmUgc2V0IHRvIHRydWUgaW4gdGhlIGdhbWUgY2xhc3Mgd2l0aFxyXG4gICAgICAgICAgICAgICAgICAgICAgICAvLyA8RGVyaXZlZENsYXNzTmFtZUZyb21UaGlzQmFzZUNsYXNzPi5TdGFydFJlbmRlcmluZygpOyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXHJcbiAgICAgICAgICAgICAgICAgICAgICAgIGJyZWFrO1xyXG4gICAgICAgICAgICAgICAgICAgIH1cclxuXHJcbiAgICAgICAgICAgICAgICAgICAgZGVmYXVsdDoge1xyXG4gICAgICAgICAgICAgICAgICAgICAgICAvLyBDb21wb25lbnQgbmFtZSBkb2VzIG5vdCBtYXRjaCB0aGUgY3JlYXRlZCBjb21wb25lbnRcclxuICAgICAgICAgICAgICAgICAgICAgICAgY29uc29sZS5lcnJvcihcIlRoZSBjb21wb25lbnQgd2l0aCB0aGUgbmFtZSBbXCIgKyBzdWNjZXNzLmNvbU5hbWUgKyBcIl0gZG9lcyBub3QgZXhpc3Qgb3IgZG9lcyBub3QgbWF0Y2ggdGhlIG5hbWUgb2YgdGhlIGNvbXBvbmVudCBjcmVhdGVkIVwiKTtcclxuICAgICAgICAgICAgICAgICAgICB9XHJcbiAgICAgICAgICAgICAgICB9XHJcbiAgICAgICAgICAgIH1cclxuICAgICAgICB9XHJcblxyXG4gICAgICAgIHJldHVybiB0cnVlO1xyXG4gICAgfSBjYXRjaCAoZXJyKSB7XHJcbiAgICAgICAgY29uc29sZS5lcnJvcihcIkdhbWVDb3JlOiBWSW5pdCgpIC0+IFByZUluaXQoKSAtPiAjIyMgRVJST1I6XFxuXCIgKyBKU09OLnN0cmluZ2lmeShlcnIsIG51bGwsIDIpKTtcclxuICAgICAgICByZXR1cm4gZmFsc2U7XHJcbiAgICB9XHJcbn1cclxuLy8jZW5kcmVnaW9uXHJcblxyXG4vLyBNYWluIGdhbWUgY2xhc3NcclxuLyoqXHJcbiAqXHJcbiAqXHJcbiAqIEBleHBvcnRcclxuICogQGNsYXNzIE1HS0VkaXRcclxuICogQGV4dGVuZHMge0dhbWVDb3JlfVxyXG4gKi9cclxuZXhwb3J0IGNsYXNzIE1HS0VkaXQgZXh0ZW5kcyBHYW1lQ29yZSB7XHJcbiAgICAvKipcclxuICAgICAqIENyZWF0ZXMgYW4gaW5zdGFuY2Ugb2YgTUdLRWRpdC5cclxuICAgICAqIEBwYXJhbSB7c3RyaW5nfSBfY2FudmFzRWxlbWVudFxyXG4gICAgICogQG1lbWJlcm9mIE1HS0VkaXRcclxuICAgICAqL1xyXG4gICAgY29uc3RydWN0b3IoX2NhbnZhc0VsZW1lbnQ6IHN0cmluZykge1xyXG4gICAgICAgIHN1cGVyKF9jYW52YXNFbGVtZW50LCBfX2Rpcm5hbWUgKyBcIi8uLi9jb21wb25lbnRzL1wiLCBuZXcgTUdLRWRpdExvZ2ljKCkpO1xyXG4gICAgfVxyXG5cclxuICAgIC8vI3JlZ2lvbiBDb250cm9sIE1ldGhvZCBPdmVycmlkZXNcclxuICAgIC8qKlxyXG4gICAgICpcclxuICAgICAqXHJcbiAgICAgKiBAcmV0dXJuIHsqfSAge2Jvb2xlYW59XHJcbiAgICAgKiBAbWVtYmVyb2YgTUdLRWRpdFxyXG4gICAgICovXHJcbiAgICBwdWJsaWMgVkluaXQoKTogYm9vbGVhbiB7XHJcbiAgICAgICAgaWYgKHRoaXMucmVJbml0ID09PSB0cnVlKSB7XHJcbiAgICAgICAgICAgIC8vIENyZWF0ZSBjb21wb25ldHMgaGVyZTpcclxuICAgICAgICAgICAgaWYgKHRoaXMuY3JlYXRlZENvbXBvbmVudHMubGVuZ3RoID09PSAwKSB7XHJcbiAgICAgICAgICAgICAgICB0aGlzLmNyZWF0ZWRDb21wb25lbnRzLnB1c2godGhpcy5jb21NYW4uQ3JlYXRlKFwiYmFieWxvbi1qc1wiLCBcInJlbmRlcmVyXCIpKTsgLy8gVGhpcyBvbmUgbmVlZHMgdG8gYmUgbGFzdCFcclxuICAgICAgICAgICAgfVxyXG5cclxuICAgICAgICAgICAgLy8gQXNzaWduIHRoZSBwcmUgaW5pdCBmdW5jdGlvbiBzbyB0aGF0IEdhbWVDb3JlIGNhbiBjYWxsIGl0IGJlZm9yZSBjYWxsaW5nIGNvbU1hbi5Jbml0KCk7XHJcbiAgICAgICAgICAgIGlmICh0aGlzLnByZUluaXRGdW5jID09PSBudWxsKSB7XHJcbiAgICAgICAgICAgICAgICB0aGlzLnByZUluaXRGdW5jID0gUHJlSW5pdDtcclxuICAgICAgICAgICAgfVxyXG4gICAgICAgIH1cclxuXHJcbiAgICAgICAgcmV0dXJuIHN1cGVyLlZJbml0KCk7XHJcbiAgICB9XHJcblxyXG4gICAgLyoqXHJcbiAgICAgKlxyXG4gICAgICpcclxuICAgICAqIEBtZW1iZXJvZiBNR0tFZGl0XHJcbiAgICAgKi9cclxuICAgIHB1YmxpYyBWVXBkYXRlKCk6IHZvaWQge1xyXG4gICAgICAgIHN1cGVyLlZVcGRhdGUoKTtcclxuICAgIH1cclxuXHJcbiAgICAvKipcclxuICAgICAqXHJcbiAgICAgKlxyXG4gICAgICogQG1lbWJlcm9mIE1HS0VkaXRcclxuICAgICAqL1xyXG4gICAgcHVibGljIFZTaHV0ZG93bigpOiB2b2lkIHtcclxuICAgICAgICBpZiAodGhpcy5leGl0dGluZyA9PT0gdHJ1ZSkge1xyXG4gICAgICAgICAgICBsZXQgdWlTdGF0aWM6IEhUTUxFbGVtZW50ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoXCJtZ2stdWktc3RhdGljXCIpO1xyXG4gICAgICAgICAgICBpZiAoIWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKFwicXVpdFByb21wdFwiKSkge1xyXG4gICAgICAgICAgICAgICAgdWlTdGF0aWMuYXBwZW5kQ2hpbGQodGhpcy5RdWl0UHJvbXB0KCkpO1xyXG4gICAgICAgICAgICB9XHJcbiAgICAgICAgfSBlbHNlIHtcclxuICAgICAgICAgICAgaWYgKGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKFwicXVpdFByb21wdFwiKSkge1xyXG4gICAgICAgICAgICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoXCJxdWl0UHJvbXB0XCIpLnJlbW92ZSgpO1xyXG4gICAgICAgICAgICB9XHJcbiAgICAgICAgfVxyXG5cclxuICAgICAgICBzdXBlci5WU2h1dGRvd24oKTtcclxuICAgIH1cclxuICAgIC8vI2VuZHJlZ2lvblxyXG59XHJcblxyXG4vLyNyZWdpb24gR2FtZSBFbmdpbmUgRW50cnkgUG9pbnQgQ2FsbFxyXG5PbkRPTUNvbnRlbnRMb2FkZWQoZnVuY3Rpb24gKCkge1xyXG4gICAgLy8gQ3JlYXRlIHRoZSBnYW1lIHVzaW5nIHRoZSAncmVuZGVyQ2FudmFzJy5cclxuICAgIGxldCBnYW1lOiBNR0tFZGl0ID0gbmV3IE1HS0VkaXQoJ3JlbmRlci1jYW52YXMnKTtcclxuXHJcbiAgICBHYW1lQ29yZS5TZXRHYW1lVHlwZTxNR0tFZGl0PihnYW1lKTtcclxuXHJcbiAgICAvLyBJbml0aWFsaXplIHRoZSBnYW1lIGFuZCBhbGwgb2YgaXRzIGNvbXBvbmVudHNcclxuICAgIGlmICghZ2FtZS5WSW5pdCgpKSB7XHJcbiAgICAgICAgbGV0IHNwbGFzaFNjcmVlbjogSFRNTEVsZW1lbnQgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZChcIm1nay1zcGxhc2gtc2NyZWVuXCIpO1xyXG4gICAgICAgIGxldCB1aVN0YXRpYzogSFRNTEVsZW1lbnQgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZChcIm1nay11aS1zdGF0aWNcIik7XHJcbiAgICAgICAgdWlTdGF0aWMucmVtb3ZlQ2hpbGQoc3BsYXNoU2NyZWVuKTtcclxuICAgICAgICBcclxuICAgICAgICB1aVN0YXRpYy5hcHBlbmRDaGlsZChnYW1lLkZhdGFsKFxyXG4gICAgICAgICAgICBcIkNvdWxkIG5vdCBpbml0aWFsaXplIGVkaXRvciFcIiwgXHJcbiAgICAgICAgICAgIGZ1bmN0aW9uIChldmVudDogTW91c2VFdmVudCkge1xyXG4gICAgICAgICAgICAgICAgZ2FtZS5RdWl0KCk7XHJcbiAgICAgICAgICAgIH0sXHJcbiAgICAgICAgICAgIDFcclxuICAgICAgICApKTtcclxuICAgIH1cclxuICAgIFxyXG4gICAgbGV0IHNwbGFzaFNjcmVlbjogSFRNTEVsZW1lbnQgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZChcIm1nay1zcGxhc2gtc2NyZWVuXCIpO1xyXG4gICAgbGV0IHVpU3RhdGljOiBIVE1MRWxlbWVudCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKFwibWdrLXVpLXN0YXRpY1wiKTtcclxuICAgIHVpU3RhdGljLnJlbW92ZUNoaWxkKHNwbGFzaFNjcmVlbik7XHJcbn0pO1xyXG4vLyNlbmRyZWdpb24iXX0=</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-actors.html">actors</a></li><li><a href="module-components.html">components</a></li><li><a href="module-components_types.html">components/types</a></li><li><a href="module-editor.html">editor</a></li><li><a href="module-editor-logic.html">editor-logic</a></li><li><a href="module-game.html">game</a></li><li><a href="module-game-logic.html">game-logic</a></li><li><a href="module-game-views.html">game-views</a></li><li><a href="module-game-views_types.html">game-views/types</a></li><li><a href="module-main.html">main</a></li><li><a href="module-system.html">system</a></li></ul><h3>Classes</h3><ul><li><a href="ActorFactory.ActorFactory.html">ActorFactory</a></li><li><a href="BaseGameLogic.BaseGameLogic.html">BaseGameLogic</a></li><li><a href="Component.Component.html">Component</a></li><li><a href="ComponentManager.ComponentManager.html">ComponentManager</a></li><li><a href="GameCore.GameCore.html">GameCore</a></li><li><a href="HumanView.HumanView.html">HumanView</a></li><li><a href="MGKEdit.MGKEdit.html">MGKEdit</a></li><li><a href="MGKEditLogic.MGKEditLogic.html">MGKEditLogic</a></li><li><a href="module-actors-ActorFactory.html">ActorFactory</a></li><li><a href="module-components_types-Renderer.html">Renderer</a></li><li><a href="module-components-Component.html">Component</a></li><li><a href="module-components-ComponentManager.html">ComponentManager</a></li><li><a href="module-editor-logic-MGKEditLogic.html">MGKEditLogic</a></li><li><a href="module-editor-MGKEdit.html">MGKEdit</a></li><li><a href="module-game-logic-BaseGameLogic.html">BaseGameLogic</a></li><li><a href="module-game-logic-StateManager.html">StateManager</a></li><li><a href="module-game-views_types-HumanView.html">HumanView</a></li><li><a href="module-game-views-ViewManager.html">ViewManager</a></li><li><a href="module-game-GameCore.html">GameCore</a></li><li><a href="module-system-SystemDialog.html">SystemDialog</a></li><li><a href="Renderer.Renderer.html">Renderer</a></li><li><a href="StateManager.StateManager.html">StateManager</a></li><li><a href="SystemDialog.SystemDialog.html">SystemDialog</a></li><li><a href="ViewManager.ViewManager.html">ViewManager</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Oct 17 2020 07:15:34 GMT-0500 (Central Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
