@@ -39,7 +39,7 @@ function PreInit(game: MGKEdit): boolean {
                 switch(success.comName) {
                     case "babylon-js": {
                         // Renderer
-                        game.comMan.GetByName<Renderer>("babylon-js").SetCanvas(this._canvas);
+                        game.comMan.GetByName<Renderer>("babylon-js").Canvas = this._canvas;
                         game.comMan.GetByName<Renderer>("babylon-js").SetGameCore(this);
                         // Ready to turn the power on for rendering and updating game components!
                         // Crank the game with the initial update.

@@ -4,7 +4,7 @@
   "description": "Game editor using MGKFrameworkJS.",
   "main": "./app/MGKEdit/src/main.js",
   "scripts": {
-    "generate-docs": "node \".\\pre-build.js\" && tsc --build --verbose && node \".\\post-build.js\" && node \".\\include-conf-jsdoc-files.js\" && .\\node_modules\\.bin\\jsdoc.cmd -c conf-jsdoc.json",
+    "generate-docs": "node \".\\include-conf-jsdoc-files.js\" && .\\node_modules\\.bin\\jsdoc.cmd -c conf-jsdoc.json",
     "postinstall": "electron-builder install-app-deps",
     "dist-win": "electron-builder -p never --win",
     "pack": "electron-builder build --dir",
