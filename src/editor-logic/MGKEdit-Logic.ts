@@ -1,4 +1,4 @@
-/** @module editor-logic */
+/** @module editor-logic/MGKEdit-Logic */
 
 //#region Imports
 import { GameCore } from "./../../../MGKFrameworkJS/src/game/game-core";

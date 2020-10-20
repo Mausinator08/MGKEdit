@@ -1,4 +1,4 @@
-/** @module editor */
+/** @module editor/MGKEdit */
 
 //#region Imports
 import { Renderer } from "./../../../MGKFrameworkJS/src/components/types/renderer";
