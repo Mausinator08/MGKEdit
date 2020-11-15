@@ -4,11 +4,16 @@
 import { Renderer } from "./../../../MGKFrameworkJS/src/components/types/renderer";
 import { GameCore, OnDOMContentLoaded } from "./../../../MGKFrameworkJS/src/game/game-core";
 import { MGKEditLogic } from "./../editor-logic/MGKEdit-Logic";
-import { remote, BrowserWindow } from "electron";
 //#endregion
 
 //#region MGKEdit Global Methods
-// GameCore calls this. Make sure to assign it to this.preInitFunc.
+/**
+ * PreInit() occursS before component initialization but after component creation.
+ * GameCore calls this. Make sure to assign it to this.preInitFunc.
+ * 
+ * @param {MGKEdit} game
+ * @return {*}  {boolean}
+ */
 function PreInit(game: MGKEdit): boolean {
     try {
         // Pre-Initialization
@@ -66,9 +71,8 @@ function PreInit(game: MGKEdit): boolean {
 }
 //#endregion
 
-// Main game class
 /**
- *
+ * Main game class. (Based on GameCore)
  *
  * @export
  * @class MGKEdit
@@ -86,7 +90,7 @@ export class MGKEdit extends GameCore {
 
     //#region Control Method Overrides
     /**
-     *
+     * Creates componenents, assigns the PreInit() function to GameCore's preInitFunc, and then calls the GameCore base class VInit().
      *
      * @return {*}  {boolean}
      * @memberof MGKEdit
@@ -108,7 +112,7 @@ export class MGKEdit extends GameCore {
     }
 
     /**
-     *
+     * Right now just calls base class VUpdate() from GameCore.
      *
      * @memberof MGKEdit
      */
@@ -117,7 +121,7 @@ export class MGKEdit extends GameCore {
     }
 
     /**
-     *
+     * Checks to see if exitting. If so, a confirmation prompt is displayed before terminating. If canceled, the dialog is removed.
      *
      * @memberof MGKEdit
      */

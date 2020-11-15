@@ -1,13 +1,17 @@
 /** @module editor-logic/MGKEdit-Logic */
 
 //#region Imports
-import { GameCore } from "./../../../MGKFrameworkJS/src/game/game-core";
 import { HumanView } from "./../../../MGKFrameworkJS/src/game-views/types/human-view";
 import { BaseGameLogic } from "./../../../MGKFrameworkJS/src/game-logic/base-game-logic";
-import { Renderer } from "./../../../MGKFrameworkJS/src/components/types/renderer";
 //#endregion
 
 //#region MGKEditLogic Global Methods
+/**
+ * LogicPreInit() is called before views are initialized, but after view creation.
+ *
+ * @param {MGKEditLogic} logic
+ * @return {*}  {boolean}
+ */
 function LogicPreInit(logic: MGKEditLogic): boolean {
     try {
         // Initialize non human views here:
@@ -33,7 +37,7 @@ function LogicPreInit(logic: MGKEditLogic): boolean {
 //#endregion
 
 /**
- *
+ * Editor specific logic.
  *
  * @export
  * @class MGKEditLogic
@@ -50,7 +54,7 @@ export class MGKEditLogic extends BaseGameLogic {
 
     //#region Control Method Overrides
     /**
-     *
+     * Initializes views, processes, and the event system as well as game-states.
      *
      * @return {*}  {boolean}
      * @memberof MGKEditLogic
@@ -75,7 +79,7 @@ export class MGKEditLogic extends BaseGameLogic {
     }
 
     /**
-     *
+     * Updates views and game-states.
      *
      * @return {*}  {void}
      * @memberof MGKEditLogic
@@ -120,7 +124,7 @@ export class MGKEditLogic extends BaseGameLogic {
     }
 
     /**
-     *
+     * For now calls BaseGameLogic.Shutdown().
      *
      * @memberof MGKEditLogic
      */
