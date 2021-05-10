@@ -1,20 +1,14 @@
 # Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+This is the game editor for MGKFrameworkJS.
 
 # Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+Installation (be sure to close MGKEdit in the same directory next to MGKFrameworkJS.):
+1.	Download nvm for windows [https://github.com/coreybutler/nvm-windows/releases/download/1.1.7/nvm-setup.zip](here).
+2.  Extract nvm_setup.zip.
+3.  In the extracted folder from nvm_setup.zip, run nvm_setup.
+4.  On a command line, run `nvm install 15.14.0` and then `nvm use 15.14.0` inside the root of the MGKEdit cloned directory.
+5.  On a command line, run `yarn install` to install the required NodeJS dependencies.
 
 # Build and Test
-TODO: Describe and show how to build your code and run the tests. 
-
-# Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
-
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+If using VS Code, press the `F5` key to build and run the editor, or 
+run `yarn build` on the command line followed by `yarn start`.
