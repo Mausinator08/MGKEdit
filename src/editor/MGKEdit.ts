@@ -99,7 +99,7 @@ export class MGKEdit extends GameCore {
         if (this.reInit === true) {
             // Create componets here:
             if (this.createdComponents.length === 0) {
-                this.createdComponents.push(this.comMan.Create("babylon-js", "renderer")); // This one needs to be last!
+                this.createdComponents.push(this.comMan.Create("babylon-js", "babylon-js-renderer")); // This one needs to be last!
             }
 
             // Assign the pre init function so that GameCore can call it before calling comMan.Init();
@@ -164,8 +164,10 @@ OnDOMContentLoaded(function () {
         ));
     }
     
-    let splashScreen: HTMLElement = document.getElementById("mgk-splash-screen");
-    let uiStatic: HTMLElement = document.getElementById("mgk-ui-static");
-    uiStatic.removeChild(splashScreen);
+    setTimeout(() => {
+        let splashScreen: HTMLElement = document.getElementById("mgk-splash-screen");
+        let uiStatic: HTMLElement = document.getElementById("mgk-ui-static");
+        uiStatic.removeChild(splashScreen);
+    }, 2000);
 });
 //#endregion

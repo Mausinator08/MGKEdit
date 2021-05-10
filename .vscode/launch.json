@@ -24,7 +24,7 @@
             "runtimeArgs": [
                 "--enable-logging",
                 "--remote-debugging-port=9222",
-                "--debug=5858"
+                "--inspect=5858"
             ],
             "cwd": "${workspaceFolder}/app",
             "protocol": "inspector",
@@ -44,7 +44,7 @@
                 "runtimeArgs": [
                     "--enable-logging",
                     "--remote-debugging-port=9222",
-                    "--debug=5858"
+                    "--inspect=5858"
                 ]
             }
         },

@@ -26,6 +26,7 @@ function createWindow(): void {
     mainWindow = new BrowserWindow({
         webPreferences: {
             nodeIntegration: true,
+            contextIsolation: false,
             enableRemoteModule: true,
             devTools: true,
         },
