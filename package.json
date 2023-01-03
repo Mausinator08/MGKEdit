@@ -18,7 +18,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "trace": "tsc --traceResolution"
   },
-  "repository": "https://mausinator08.visualstudio.com/MausinatorGamesKitJS/_git/MGKEdit",
+  "repository": "git@github.com:Mausinator08/MGKEdit.git",
   "author": "John Patrick Maus",
   "license": "SEE LICENSE IN LICENSE.txt",
   "private": true,
@@ -78,15 +78,15 @@
     }
   },
   "dependencies": {
-    "babylonjs": "^4.2.0",
-    "multi-ini": "^2.1.2"
+    "babylonjs": "^5.40.0",
+    "multi-ini": "^2.3.2"
   },
   "devDependencies": {
-    "electron": "^12.0.7",
-    "electron-builder": "^22.11.1",
-    "jsdoc": "^3.6.6",
-    "jsdoc-plugin-typescript": "^2.0.6",
-    "typedoc": "^0.20.36",
-    "typescript": "^4.2.4"
+    "electron": "^22.0.0",
+    "electron-builder": "^23.6.0",
+    "jsdoc": "^4.0.0",
+    "jsdoc-plugin-typescript": "^2.2.0",
+    "typedoc": "^0.23.23",
+    "typescript": "^4.9.4"
   }
 }
