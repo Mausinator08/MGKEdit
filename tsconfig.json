@@ -3,16 +3,17 @@
     "composite": true,
     "declaration": true,
     "declarationMap": true,
-    "target": "es6",
+    "target": "ES2022",
     "module": "commonjs",
     "moduleResolution": "node",
     "lib": [
-      "es6",
+      "ES2022",
       "dom"
     ],
     "noImplicitAny": true,
     "inlineSourceMap": true,
     "inlineSources": true,
+    "skipLibCheck": true,
     "outDir": "app",
     "baseUrl": ".",
     "paths": {
@@ -23,7 +24,7 @@
       ]
     },
     "rootDir": "../",
-    "sourceRoot": "G:\\Workspaces\\MGKEdit\\..\\"
+    "sourceRoot": "D:\\repos\\MGKEdit\\..\\"
   },
   "include": [
     "src/**/*",

@@ -2,8 +2,11 @@
 
 //#region Imports
 import { app, BrowserWindow } from "electron";
+import * as remoteMain from "@electron/remote/main";
+remoteMain.initialize();
 import * as path from "path";
 import * as url from "url";
+import { Texture } from "babylonjs";
 
 // Uncomment the following line later when ini settings files are being used.
 // import * as ini from "multi-ini";
@@ -27,7 +30,6 @@ function createWindow(): void {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
-            enableRemoteModule: true,
             devTools: true,
         },
         minWidth: 800,
@@ -36,6 +38,8 @@ function createWindow(): void {
         height: 720,
         title: "MGK Edit"
     });
+
+    remoteMain.enable(mainWindow.webContents);
 
     // Load index.html for the main window.
     mainWindow.loadURL(url.format({
@@ -78,7 +82,7 @@ app.on("activate", () => {
     // On OS X it"s common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (mainWindow === null) {
-      createWindow();
+        createWindow();
     }
 });
 
