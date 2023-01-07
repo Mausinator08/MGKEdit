@@ -14,7 +14,7 @@ import { MGKEditLogic } from "./../editor-logic/MGKEdit-Logic";
  * @param {MGKEdit} game
  * @return {*}  {boolean}
  */
-function PreInit(game: MGKEdit): boolean {
+function PreInit(game: GameCore): boolean {
     try {
         // Pre-Initialization
         for (let s of game.createdComponents) {
@@ -103,7 +103,7 @@ export class MGKEdit extends GameCore {
             }
 
             // Assign the pre init function so that GameCore can call it before calling comMan.Init();
-            if (this.preInitFunc === null) {
+            if (!this.preInitFunc) {
                 this.preInitFunc = PreInit;
             }
         }
@@ -162,6 +162,8 @@ OnDOMContentLoaded(function () {
             },
             1
         ));
+
+        return;
     }
     
     setTimeout(() => {

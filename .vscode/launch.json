@@ -53,8 +53,8 @@
             "type": "chrome",
             "request": "attach",
             "pathMapping": {
-                "${workspaceFolder}/app/MGKEdit/src/*.js": "${workspaceFolder}/src/*.ts",
-                "${workspaceFolder}/app/MGKFrameworkJS/src/*.js": "${workspaceFolder}/../MGKFrameworkJS/src/*.ts"
+                "${workspaceFolder}/app/MGKEdit/src/**/*.js": "${workspaceFolder}/src/**/*.ts",
+                "${workspaceFolder}/app/MGKFrameworkJS/src/**/*.js": "${workspaceFolder}/../MGKFrameworkJS/src/**/*.ts"
             },
             "outFiles": [
                 "${workspaceFolder}/app/**/*.js"
