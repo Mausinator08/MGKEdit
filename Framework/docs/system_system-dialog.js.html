@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: system/system-dialog.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: system/system-dialog.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+/** @module system/system-dialog */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SystemDialog = void 0;
+//#region Imports
+const electron_1 = require("electron");
+const game_core_1 = require("./../game/game-core");
+//#endregion
+/**
+ *
+ *
+ * @export
+ * @class SystemDialog
+ */
+class SystemDialog {
+    /**
+     * Creates an instance of SystemDialog.
+     * @memberof SystemDialog
+     */
+    constructor() {
+    }
+    //#region Dialog Prompts
+    /**
+     *
+     *
+     * @param {string} message
+     * @param {Function} action
+     * @param {number} exitCode
+     * @return {*}  {HTMLElement}
+     * @memberof SystemDialog
+     */
+    Fatal(message, action, exitCode) {
+        let errorPopup = document.createElement("div");
+        errorPopup.setAttribute("id", "fatalError");
+        errorPopup.setAttribute("class", "ui-system-dialog-popup");
+        let heading = document.createElement("h1");
+        let errorMsg = document.createElement("h2");
+        heading.setAttribute("style", "color: red;");
+        heading.innerHTML = "FATAL ERROR:";
+        errorMsg.setAttribute("style", "color: red;");
+        errorMsg.innerHTML = message;
+        let okButton = document.createElement("button");
+        okButton.innerHTML = "OK";
+        okButton.setAttribute("id", "btnFatalOK");
+        okButton.setAttribute("style", "color: red; background-color: rgba(80, 80, 80, 80); border-width: 2pt; border-style: solid; border-color: red; border-radius: 2pt; font-size: 14pt;");
+        okButton.addEventListener("click", function (event) {
+            action(event);
+            let _window = electron_1.remote.getCurrentWindow();
+            _window.close();
+            process.exit(exitCode);
+        });
+        errorPopup.appendChild(heading);
+        errorPopup.appendChild(errorMsg);
+        errorPopup.appendChild(okButton);
+        return errorPopup;
+    }
+    /**
+     *
+     *
+     * @return {*}  {HTMLElement}
+     * @memberof SystemDialog
+     */
+    QuitPrompt() {
+        let prompt = document.createElement("div");
+        prompt.setAttribute("id", "quitPrompt");
+        prompt.setAttribute("class", "ui-system-dialog-popup");
+        let heading = document.createElement("h1");
+        let quitMsg = document.createElement("h2");
+        heading.setAttribute("style", "color: purple;");
+        heading.innerHTML = "QUITTING?";
+        quitMsg.setAttribute("style", "color: white;");
+        quitMsg.innerHTML = "Are you sure that you want to quit?";
+        let yesButton = document.createElement("button");
+        let noButton = document.createElement("button");
+        yesButton.innerHTML = "YES";
+        yesButton.setAttribute("id", "btnQuitYes");
+        yesButton.setAttribute("style", "color: green; background-color: rgba(80, 80, 80, 80); border-width: 2pt; border-style: solid; border-color: green; border-radius: 2pt; font-size: 14pt;");
+        yesButton.addEventListener("click", function (event) {
+            game_core_1.GameCore.game.Quit();
+        });
+        noButton.innerHTML = "NO";
+        noButton.setAttribute("id", "btnQuitNo");
+        noButton.setAttribute("style", "color: red; background-color: rgba(80, 80, 80, 80); border-width: 2pt; border-style: solid; border-color: red; border-radius: 2pt; font-size: 14pt;");
+        noButton.addEventListener("click", function (event) {
+            game_core_1.GameCore.game.CancelExit();
+            prompt.remove();
+        });
+        prompt.appendChild(heading);
+        prompt.appendChild(quitMsg);
+        prompt.appendChild(yesButton);
+        prompt.appendChild(noButton);
+        return prompt;
+    }
+}
+exports.SystemDialog = SystemDialog;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoic3lzdGVtLWRpYWxvZy5qcyIsInNvdXJjZVJvb3QiOiJHOi9Xb3Jrc3BhY2VzL01HS0VkaXQvLi4vIiwic291cmNlcyI6WyJNR0tGcmFtZXdvcmtKUy9zcmMvc3lzdGVtL3N5c3RlbS1kaWFsb2cudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IjtBQUFBLG1DQUFtQzs7O0FBRW5DLGlCQUFpQjtBQUNqQix1Q0FBaUQ7QUFDakQsbURBQThDO0FBQzlDLFlBQVk7QUFFWjs7Ozs7R0FLRztBQUNILE1BQWEsWUFBWTtJQUNyQjs7O09BR0c7SUFDSDtJQUNBLENBQUM7SUFFRCx3QkFBd0I7SUFDeEI7Ozs7Ozs7O09BUUc7SUFDSSxLQUFLLENBQUMsT0FBZSxFQUFFLE1BQWdCLEVBQUUsUUFBZ0I7UUFDNUQsSUFBSSxVQUFVLEdBQW1CLFFBQVEsQ0FBQyxhQUFhLENBQUMsS0FBSyxDQUFDLENBQUM7UUFFL0QsVUFBVSxDQUFDLFlBQVksQ0FBQyxJQUFJLEVBQUUsWUFBWSxDQUFDLENBQUM7UUFDNUMsVUFBVSxDQUFDLFlBQVksQ0FBQyxPQUFPLEVBQUUsd0JBQXdCLENBQUMsQ0FBQztRQUUzRCxJQUFJLE9BQU8sR0FBdUIsUUFBUSxDQUFDLGFBQWEsQ0FBQyxJQUFJLENBQUMsQ0FBQztRQUMvRCxJQUFJLFFBQVEsR0FBdUIsUUFBUSxDQUFDLGFBQWEsQ0FBQyxJQUFJLENBQUMsQ0FBQztRQUVoRSxPQUFPLENBQUMsWUFBWSxDQUFDLE9BQU8sRUFBRSxhQUFhLENBQUMsQ0FBQztRQUM3QyxPQUFPLENBQUMsU0FBUyxHQUFHLGNBQWMsQ0FBQztRQUNuQyxRQUFRLENBQUMsWUFBWSxDQUFDLE9BQU8sRUFBRSxhQUFhLENBQUMsQ0FBQztRQUM5QyxRQUFRLENBQUMsU0FBUyxHQUFHLE9BQU8sQ0FBQztRQUU3QixJQUFJLFFBQVEsR0FBc0IsUUFBUSxDQUFDLGFBQWEsQ0FBQyxRQUFRLENBQUMsQ0FBQztRQUVuRSxRQUFRLENBQUMsU0FBUyxHQUFHLElBQUksQ0FBQztRQUMx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RUo7QUEzR0Qsb0NBMkdDIiwic291cmNlc0NvbnRlbnQiOlsiLyoqIEBtb2R1bGUgc3lzdGVtL3N5c3RlbS1kaWFsb2cgKi9cclxuXHJcbi8vI3JlZ2lvbiBJbXBvcnRzXHJcbmltcG9ydCB7IEJyb3dzZXJXaW5kb3csIHJlbW90ZSB9IGZyb20gXCJlbGVjdHJvblwiO1xyXG5pbXBvcnQgeyBHYW1lQ29yZSB9IGZyb20gXCIuLy4uL2dhbWUvZ2FtZS1jb3JlXCJcclxuLy8jZW5kcmVnaW9uXHJcblxyXG4vKipcclxuICpcclxuICpcclxuICogQGV4cG9ydFxyXG4gKiBAY2xhc3MgU3lzdGVtRGlhbG9nXHJcbiAqL1xyXG5leHBvcnQgY2xhc3MgU3lzdGVtRGlhbG9nIHtcclxuICAgIC8qKlxyXG4gICAgICogQ3JlYXRlcyBhbiBpbnN0YW5jZSBvZiBTeXN0ZW1EaWFsb2cuXHJcbiAgICAgKiBAbWVtYmVyb2YgU3lzdGVtRGlhbG9nXHJcbiAgICAgKi9cclxuICAgIGNvbnN0cnVjdG9yKCkge1xyXG4gICAgfVxyXG5cclxuICAgIC8vI3JlZ2lvbiBEaWFsb2cgUHJvbXB0c1xyXG4gICAgLyoqXHJcbiAgICAgKlxyXG4gICAgICpcclxuICAgICAqIEBwYXJhbSB7c3RyaW5nfSBtZXNzYWdlXHJcbiAgICAgKiBAcGFyYW0ge0Z1bmN0aW9ufSBhY3Rpb25cclxuICAgICAqIEBwYXJhbSB7bnVtYmVyfSBleGl0Q29kZVxyXG4gICAgICogQHJldHVybiB7Kn0gIHtIVE1MRWxlbWVudH1cclxuICAgICAqIEBtZW1iZXJvZiBTeXN0ZW1EaWFsb2dcclxuICAgICAqL1xyXG4gICAgcHVibGljIEZhdGFsKG1lc3NhZ2U6IHN0cmluZywgYWN0aW9uOiBGdW5jdGlvbiwgZXhpdENvZGU6IG51bWJlcik6IEhUTUxFbGVtZW50IHtcclxuICAgICAgICBsZXQgZXJyb3JQb3B1cDogSFRNTERpdkVsZW1lbnQgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KFwiZGl2XCIpO1xyXG5cclxuICAgICAgICBlcnJvclBvcHVwLnNldEF0dHJpYnV0ZShcImlkXCIsIFwiZmF0YWxFcnJvclwiKTtcclxuICAgICAgICBlcnJvclBvcHVwLnNldEF0dHJpYnV0ZShcImNsYXNzXCIsIFwidWktc3lzdGVtLWRpYWxvZy1wb3B1cFwiKTtcclxuXHJcbiAgICAgICAgbGV0IGhlYWRpbmc6IEhUTUxIZWFkaW5nRWxlbWVudCA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoXCJoMVwiKTtcclxuICAgICAgICBsZXQgZXJyb3JNc2c6IEhUTUxIZWFkaW5nRWxlbWVudCA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoXCJoMlwiKTtcclxuXHJcbiAgICAgICAgaGVhZGluZy5zZXRBdHRyaWJ1dGUoXCJzdHlsZVwiLCBcImNvbG9yOiByZWQ7XCIpO1xyXG4gICAgICAgIGhlYWRpbmcuaW5uZXJIVE1MID0gXCJGQVRBTCBFUlJPUjpcIjtcclxuICAgICAgICBlcnJvck1zZy5zZXRBdHRyaWJ1dGUoXCJzdHlsZVwiLCBcImNvbG9yOiByZWQ7XCIpO1xyXG4gICAgICAgIGVycm9yTXNnLmlubmVySFRNTCA9IG1lc3NhZ2U7XHJcblxyXG4gICAgICAgIGxldCBva0J1dHRvbjogSFRNTEJ1dHRvbkVsZW1lbnQgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KFwiYnV0dG9uXCIpO1xyXG5cclxuICAgICAgICBva0J1dHRvbi5pbm5lckhUTUwgPSBcIk9LXCI7XHJcbiAgICAgICAgb2tCdXR0b24uc2V0QXR0cmlidXRlKFwiaWRcIiwgXCJidG5GYXRhbE9LXCIpO1xyXG4gICAgICAgIG9rQnV0dG9uLnNldEF0dHJpYnV0ZShcInN0eWxlXCIsIFwiY29sb3I6IHJlZDsgYmFja2dyb3VuZC1jb2xvcjogcmdiYSg4MCwgODAsIDgwLCA4MCk7IGJvcmRlci13aWR0aDogMnB0OyBib3JkZXItc3R5bGU6IHNvbGlkOyBib3JkZXItY29sb3I6IHJlZDsgYm9yZGVyLXJhZGl1czogMnB0OyBmb250LXNpemU6IDE0cHQ7XCIpO1xyXG4gICAgICAgIG9rQnV0dG9uLmFkZEV2ZW50TGlzdGVuZXIoXHJcbiAgICAgICAgICAgIFwiY2xpY2tcIiwgXHJcbiAgICAgICAgICAgIGZ1bmN0aW9uKGV2ZW50OiBNb3VzZUV2ZW50KSB7XHJcbiAgICAgICAgICAgICAgICBhY3Rpb24oZXZlbnQpO1xyXG4gICAgICAgICAgICAgICAgbGV0IF93aW5kb3c6IEJyb3dzZXJXaW5kb3cgPSByZW1vdGUuZ2V0Q3VycmVudFdpbmRvdygpO1xyXG5cclxuICAgICAgICAgICAgICAgIF93aW5kb3cuY2xvc2UoKTtcclxuICAgICAgICAgICAgICAgIHByb2Nlc3MuZXhpdChleGl0Q29kZSk7XHJcbiAgICAgICAgICAgIH1cclxuICAgICAgICApO1xyXG5cclxuICAgICAgICBlcnJvclBvcHVwLmFwcGVuZENoaWxkKGhlYWRpbmcpO1xyXG4gICAgICAgIGVycm9yUG9wdXAuYXBwZW5kQ2hpbGQoZXJyb3JNc2cpO1xyXG4gICAgICAgIGVycm9yUG9wdXAuYXBwZW5kQ2hpbGQob2tCdXR0b24pO1xyXG5cclxuICAgICAgICByZXR1cm4gZXJyb3JQb3B1cDtcclxuICAgIH1cclxuXHJcbiAgICAvKipcclxuICAgICAqXHJcbiAgICAgKlxyXG4gICAgICogQHJldHVybiB7Kn0gIHtIVE1MRWxlbWVudH1cclxuICAgICAqIEBtZW1iZXJvZiBTeXN0ZW1EaWFsb2dcclxuICAgICAqL1xyXG4gICAgcHVibGljIFF1aXRQcm9tcHQoKTogSFRNTEVsZW1lbnQge1xyXG4gICAgICAgIGxldCBwcm9tcHQ6IEhUTUxEaXZFbGVtZW50ID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudChcImRpdlwiKTtcclxuXHJcbiAgICAgICAgcHJvbXB0LnNldEF0dHJpYnV0ZShcImlkXCIsIFwicXVpdFByb21wdFwiKTtcclxuICAgICAgICBwcm9tcHQuc2V0QXR0cmlidXRlKFwiY2xhc3NcIiwgXCJ1aS1zeXN0ZW0tZGlhbG9nLXBvcHVwXCIpO1xyXG5cclxuICAgICAgICBsZXQgaGVhZGluZzogSFRNTEhlYWRpbmdFbGVtZW50ID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudChcImgxXCIpO1xyXG4gICAgICAgIGxldCBxdWl0TXNnOiBIVE1MSGVhZGluZ0VsZW1lbnQgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KFwiaDJcIik7XHJcblxyXG4gICAgICAgIGhlYWRpbmcuc2V0QXR0cmlidXRlKFwic3R5bGVcIiwgXCJjb2xvcjogcHVycGxlO1wiKTtcclxuICAgICAgICBoZWFkaW5nLmlubmVySFRNTCA9IFwiUVVJVFRJTkc/XCI7XHJcbiAgICAgICAgcXVpdE1zZy5zZXRBdHRyaWJ1dGUoXCJzdHlsZVwiLCBcImNvbG9yOiB3aGl0ZTtcIik7XHJcbiAgICAgICAgcXVpdE1zZy5pbm5lckhUTUwgPSBcIkFyZSB5b3Ugc3VyZSB0aGF0IHlvdSB3YW50IHRvIHF1aXQ/XCI7XHJcblxyXG4gICAgICAgIGxldCB5ZXNCdXR0b246IEhUTUxCdXR0b25FbGVtZW50ID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudChcImJ1dHRvblwiKTtcclxuICAgICAgICBsZXQgbm9CdXR0b246IEhUTUxCdXR0b25FbGVtZW50ID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudChcImJ1dHRvblwiKTtcclxuXHJcbiAgICAgICAgeWVzQnV0dG9uLmlubmVySFRNTCA9IFwiWUVTXCI7XHJcbiAgICAgICAgeWVzQnV0dG9uLnNldEF0dHJpYnV0ZShcImlkXCIsIFwiYnRuUXVpdFllc1wiKTtcclxuICAgICAgICB5ZXNCdXR0b24uc2V0QXR0cmlidXRlKFwic3R5bGVcIiwgXCJjb2xvcjogZ3JlZW47IGJhY2tncm91bmQtY29sb3I6IHJnYmEoODAsIDgwLCA4MCwgODApOyBib3JkZXItd2lkdGg6IDJwdDsgYm9yZGVyLXN0eWxlOiBzb2xpZDsgYm9yZGVyLWNvbG9yOiBncmVlbjsgYm9yZGVyLXJhZGl1czogMnB0OyBmb250LXNpemU6IDE0cHQ7XCIpO1xyXG4gICAgICAgIHllc0J1dHRvbi5hZGRFdmVudExpc3RlbmVyKFxyXG4gICAgICAgICAgICBcImNsaWNrXCIsIFxyXG4gICAgICAgICAgICBmdW5jdGlvbiAoZXZlbnQ6IE1vdXNlRXZlbnQpIHtcclxuICAgICAgICAgICAgICAgIEdhbWVDb3JlLmdhbWUuUXVpdCgpO1xyXG4gICAgICAgICAgICB9XHJcbiAgICAgICAgKTtcclxuICAgICAgICBcclxuICAgICAgICBub0J1dHRvbi5pbm5lckhUTUwgPSBcIk5PXCI7XHJcbiAgICAgICAgbm9CdXR0b24uc2V0QXR0cmlidXRlKFwiaWRcIiwgXCJidG5RdWl0Tm9cIik7XHJcbiAgICAgICAgbm9CdXR0b24uc2V0QXR0cmlidXRlKFwic3R5bGVcIiwgXCJjb2xvcjogcmVkOyBiYWNrZ3JvdW5kLWNvbG9yOiByZ2JhKDgwLCA4MCwgODAsIDgwKTsgYm9yZGVyLXdpZHRoOiAycHQ7IGJvcmRlci1zdHlsZTogc29saWQ7IGJvcmRlci1jb2xvcjogcmVkOyBib3JkZXItcmFkaXVzOiAycHQ7IGZvbnQtc2l6ZTogMTRwdDtcIik7XHJcbiAgICAgICAgbm9CdXR0b24uYWRkRXZlbnRMaXN0ZW5lcihcclxuICAgICAgICAgICAgXCJjbGlja1wiLCBcclxuICAgICAgICAgICAgZnVuY3Rpb24gKGV2ZW50OiBNb3VzZUV2ZW50KSB7XHJcbiAgICAgICAgICAgICAgICBHYW1lQ29yZS5nYW1lLkNhbmNlbEV4aXQoKTtcclxuICAgICAgICAgICAgICAgIHByb21wdC5yZW1vdmUoKTtcclxuICAgICAgICAgICAgfVxyXG4gICAgICAgICk7XHJcblxyXG4gICAgICAgIHByb21wdC5hcHBlbmRDaGlsZChoZWFkaW5nKTtcclxuICAgICAgICBwcm9tcHQuYXBwZW5kQ2hpbGQocXVpdE1zZyk7XHJcbiAgICAgICAgcHJvbXB0LmFwcGVuZENoaWxkKHllc0J1dHRvbik7XHJcbiAgICAgICAgcHJvbXB0LmFwcGVuZENoaWxkKG5vQnV0dG9uKTtcclxuXHJcbiAgICAgICAgcmV0dXJuIHByb21wdDtcclxuICAgIH1cclxuICAgIC8vI2VuZHJlZ2lvblxyXG59Il19</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-actors_actor-factory.html">actors/actor-factory</a></li><li><a href="module-components_component.html">components/component</a></li><li><a href="module-components_component-manager.html">components/component-manager</a></li><li><a href="module-components_types_renderer.html">components/types/renderer</a></li><li><a href="module-game-logic_base-game-logic.html">game-logic/base-game-logic</a></li><li><a href="module-game-logic_game-state-interface.html">game-logic/game-state-interface</a></li><li><a href="module-game-logic_game-state-manager.html">game-logic/game-state-manager</a></li><li><a href="module-game-views_game-view-interface.html">game-views/game-view-interface</a></li><li><a href="module-game-views_game-view-manager.html">game-views/game-view-manager</a></li><li><a href="module-game-views_types_human-view.html">game-views/types/human-view</a></li><li><a href="module-game_game-core.html">game/game-core</a></li><li><a href="module-system_system-dialog.html">system/system-dialog</a></li></ul><h3>Classes</h3><ul><li><a href="ActorFactory.ActorFactory.html">ActorFactory</a></li><li><a href="BaseGameLogic.BaseGameLogic.html">BaseGameLogic</a></li><li><a href="Component.Component.html">Component</a></li><li><a href="ComponentManager.ComponentManager.html">ComponentManager</a></li><li><a href="GameCore.GameCore.html">GameCore</a></li><li><a href="HumanView.HumanView.html">HumanView</a></li><li><a href="module-actors_actor-factory-ActorFactory.html">ActorFactory</a></li><li><a href="module-components_component-manager-ComponentManager.html">ComponentManager</a></li><li><a href="module-components_component-Component.html">Component</a></li><li><a href="module-components_types_renderer-Renderer.html">Renderer</a></li><li><a href="module-game-logic_base-game-logic-BaseGameLogic.html">BaseGameLogic</a></li><li><a href="module-game-logic_game-state-manager-StateManager.html">StateManager</a></li><li><a href="module-game-views_game-view-manager-ViewManager.html">ViewManager</a></li><li><a href="module-game-views_types_human-view-HumanView.html">HumanView</a></li><li><a href="module-game_game-core-GameCore.html">GameCore</a></li><li><a href="module-system_system-dialog-SystemDialog.html">SystemDialog</a></li><li><a href="Renderer.Renderer.html">Renderer</a></li><li><a href="StateManager.StateManager.html">StateManager</a></li><li><a href="SystemDialog.SystemDialog.html">SystemDialog</a></li><li><a href="ViewManager.ViewManager.html">ViewManager</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Oct 19 2020 19:25:13 GMT-0500 (Central Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

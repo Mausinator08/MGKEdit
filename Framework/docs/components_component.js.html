@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/component.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/component.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+/** @module components/component */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Component = void 0;
+/**
+ * The base component class. Components like the renderer inherit this class.
+ *
+ * @export
+ * @class Component
+ */
+class Component {
+    //#endregion
+    /**
+     * Creates an instance of Component.
+     * @param {string} name
+     * @param {string} type
+     * @memberof Component
+     */
+    constructor(name, type) {
+        //#region Fields
+        /**
+         * Component name (key) for look up in component manager.
+         *
+         * @protected
+         * @type {string}
+         * @memberof Component
+         */
+        this.name = "component";
+        /**
+         * Component type. Multiple components can be retreived from component manager with GetArrayByType().
+         *
+         * @protected
+         * @type {string}
+         * @memberof Component
+         */
+        this.type = "component";
+        /**
+         * True if initialized, false otherwise.
+         *
+         * @protected
+         * @type {boolean}
+         * @memberof Component
+         */
+        this.isInitialized = false;
+        /**
+         * If reInit is true, the component may have new resources to initialize so componenet manager will know to initialize again.
+         *
+         * @protected
+         * @type {boolean}
+         * @memberof Component
+         */
+        this.reInit = true;
+        /**
+         * If true, resources are freed and the component is uninitialized. It still exists in component manager for later initialization.
+         *
+         * @protected
+         * @type {boolean}
+         * @memberof Component
+         */
+        this.requestShutdown = false;
+        this.name = name;
+        this.type = type;
+    }
+    //#region Accessors
+    /**
+     * Returns whether or not this component is initialized.
+     *
+     * @readonly
+     * @type {boolean}
+     * @memberof Component
+     */
+    get IsInitialized() {
+        return this.isInitialized;
+    }
+    /**
+     * Returns whether or not this component needs to be reinitialized
+     *
+     * @readonly
+     * @type {boolean}
+     * @memberof Component
+     */
+    get ReInit() {
+        return this.reInit;
+    }
+    /**
+     * This will mark the component in component manager for reinitialization.
+     *
+     * @memberof Component
+     */
+    ReInitialize() {
+        this.reInit = true;
+        this.isInitialized = false;
+    }
+    /**
+     * Returns if the component has been marked for shutdown.
+     *
+     * @return {*}  {boolean}
+     * @memberof Component
+     */
+    ShutdownRequested() {
+        return this.requestShutdown;
+    }
+    /**
+     * Marks the component for shutdown.
+     *
+     * @memberof Component
+     */
+    RequestShutdown() {
+        this.requestShutdown = true;
+    }
+    //#endregion
+    //#region Control Method Overrides
+    // Core functions.
+    /**
+     * Initialize the component and mark it as initialized if successful.
+     * This is an override
+     *
+     * @return {*}  {boolean}
+     * @memberof Component
+     */
+    VInit() {
+        this.reInit = false;
+        return this.isInitialized;
+    }
+    /**
+     * If Initialized, run the update function.
+     * This is an override
+     *
+     * @memberof Component
+     */
+    VUpdate() {
+        if (!this.isInitialized) {
+            console.error("Component: VUpdate() -> Component not initialized! Could not update component [" + this.name + "] of type &lt;" + this.type + ">.");
+        }
+    }
+    /**
+     * This is only called by component manager if requestShutdown === true
+     * This is an override
+     *
+     * @memberof Component
+     */
+    VShutdown() {
+        this.isInitialized = false;
+        this.requestShutdown = false;
+    }
+    // END OVERRIDES
+    //#endregion
+    //#region Name and Type retrieval functions
+    /**
+     * Returns the set name of this component.
+     *
+     * @return {*}  {string}
+     * @memberof Component
+     */
+    VGetName() {
+        return this.name;
+    }
+    /**
+     * Returns the set sub-type of this component.
+     *
+     * @return {*}  {string}
+     * @memberof Component
+     */
+    VGetType() {
+        return this.type;
+    }
+}
+exports.Component = Component;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY29tcG9uZW50LmpzIiwic291cmNlUm9vdCI6Ikc6L1dvcmtzcGFjZXMvTUdLRWRpdC8uLi8iLCJzb3VyY2VzIjpbIk1HS0ZyYW1ld29ya0pTL3NyYy9jb21wb25lbnRzL2NvbXBvbmVudC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiO0FBQUEsbUNBQW1DOzs7QUFFbkM7Ozs7O0dBS0c7QUFDSCxNQUFhLFNBQVM7SUEwQ2xCLFlBQVk7SUFFWjs7Ozs7T0FLRztJQUNILFlBQVksSUFBWSxFQUFFLElBQVk7UUFqRHRDLGdCQUFnQjtRQUNoQjs7Ozs7O1dBTUc7UUFDTyxTQUFJLEdBQVcsV0FBVyxDQUFDO1FBQ3JDOzs7Ozs7V0FNRztRQUNPLFNBQUksR0FBVyxXQUFXLENBQUM7UUFDckM7Ozs7OztXQU1HO1FBQ08sa0JBQWEsR0FBWSxLQUFLLENBQUM7UUFDekM7Ozs7OztXQU1HO1FBQ08sV0FBTSxHQUFZLElBQUksQ0FBQztRQUNqQzs7Ozs7O1dBTUc7UUFDTyxvQkFBZSxHQUFZLEtBQUssQ0FBQztRQVV2QyxJQUFJLENBQUMsSUFBSSxHQUFHLElBQUksQ0FBQztRQUNqQixJQUFJLENBQUMsSUFBSSxHQUFHLElBQUksQ0FBQztJQUNyQixDQUFDO0lBRUQsbUJBQW1CO0lBQ25COzs7Ozs7T0FNRztJQUNILElBQVcsYUFBYTtRQUNwQixPQUFPLElBQUksQ0FBQyxhQUFhLENBQUM7SUFDOUIsQ0FBQztJQUVEOzs7Ozs7T0FNRztJQUNILElBQVcsTUFBTTtRQUNiLE9BQU8sSUFBSSxDQUFDLE1BQU0sQ0FBQztJQUN2QixDQUFDO0lBQ0Q7Ozs7T0FJRztJQUNJLFlBQVk7UUFDZixJQUFJLENBQUMsTUFBTSxHQUFHLElBQUksQ0FBQztRQUNuQixJQUFJLENBQUMsYUFBYSxHQUFHLEtBQUssQ0FBQztJQUMvQixDQUFDO0lBRUQ7Ozs7O09BS0c7SUFDSSxpQkFBaUI7UUFDcEIsT0FBTyxJQUFJLENBQUMsZUFBZSxDQUFDO0lBQ2hDLENBQUM7SUFFRDs7OztPQUlHO0lBQ0ksZUFBZTtRQUNsQixJQUFJLENBQUMsZUFBZSxHQUFHLElBQUksQ0FBQztJQUNoQyxDQUFDO0lBQ0QsWUFBWTtJQUVaLGtDQUFrQztJQUNsQyxrQkFBa0I7SUFDbEI7Ozs7OztPQU1HO0lBQ0ksS0FBSztRQUNSLElBQUksQ0FBQyxNQUFNLEdBQUcsS0FBSyxDQUFDO1FBQ3BCLE9BQU8sSUFBSSxDQUFDLGFBQWEsQ0FBQztJQUM5QixDQUFDO0lBRUQ7Ozs7O09BS0c7SUFDSSxPQUFPO1FBQ1YsSUFBSSxDQUFDLElBQUksQ0FBQyxhQUFhLEVBQUU7WUFDckIsT0FBTyxDQUFDLEtBQUssQ0FBQyxpRkFBaUYsR0FBRyxJQUFJLENBQUMsSUFBSSxHQUFHLGFBQWEsR0FBRyxJQUFJLENBQUMsSUFBSSxHQUFHLElBQUksQ0FBQyxDQUFDO1NBQ25KO0lBQ0wsQ0FBQztJQUVEOzs7OztPQUtHO0lBQ0ksU0FBUztRQUNaLElBQUksQ0FBQyxhQUFhLEdBQUcsS0FBSyxDQUFDO1FBQzNCLElBQUksQ0FBQyxlQUFlLEdBQUcsS0FBSyxDQUFDO0lBQ2pDLENBQUM7SUFDRCxnQkFBZ0I7SUFDaEIsWUFBWTtJQUVaLDJDQUEyQztJQUMzQzs7Ozs7T0FLRztJQUNJLFFBQVE7UUFDWCxPQUFPLElBQUksQ0FBQyxJQUFJLENBQUM7SUFDckIsQ0FBQztJQUVEOzs7OztPQUtHO0lBQ0ksUUFBUTtRQUNYLE9BQU8sSUFBSSxDQUFDLElBQUksQ0FBQztJQUNyQixDQUFDO0NBRUo7QUF2S0QsOEJBdUtDIiwic291cmNlc0NvbnRlbnQiOlsiLyoqIEBtb2R1bGUgY29tcG9uZW50cy9jb21wb25lbnQgKi9cclxuXHJcbi8qKlxyXG4gKiBUaGUgYmFzZSBjb21wb25lbnQgY2xhc3MuIENvbXBvbmVudHMgbGlrZSB0aGUgcmVuZGVyZXIgaW5oZXJpdCB0aGlzIGNsYXNzLlxyXG4gKlxyXG4gKiBAZXhwb3J0XHJcbiAqIEBjbGFzcyBDb21wb25lbnRcclxuICovXHJcbmV4cG9ydCBjbGFzcyBDb21wb25lbnQge1xyXG4gICAgLy8jcmVnaW9uIEZpZWxkc1xyXG4gICAgLyoqXHJcbiAgICAgKiBDb21wb25lbnQgbmFtZSAoa2V5KSBmb3IgbG9vayB1cCBpbiBjb21wb25lbnQgbWFuYWdlci5cclxuICAgICAqXHJcbiAgICAgKiBAcHJvdGVjdGVkXHJcbiAgICAgKiBAdHlwZSB7c3RyaW5nfVxyXG4gICAgICogQG1lbWJlcm9mIENvbXBvbmVudFxyXG4gICAgICovXHJcbiAgICBwcm90ZWN0ZWQgbmFtZTogc3RyaW5nID0gXCJjb21wb25lbnRcIjtcclxuICAgIC8qKlxyXG4gICAgICogQ29tcG9uZW50IHR5cGUuIE11bHRpcGxlIGNvbXBvbmVudHMgY2FuIGJlIHJldHJlaXZlZCBmcm9tIGNvbXBvbmVudCBtYW5hZ2VyIHdpdGggR2V0QXJyYXlCeVR5cGUoKS5cclxuICAgICAqXHJcbiAgICAgKiBAcHJvdGVjdGVkXHJcbiAgICAgKiBAdHlwZSB7c3RyaW5nfVxyXG4gICAgICogQG1lbWJlcm9mIENvbXBvbmVudFxyXG4gICAgICovXHJcbiAgICBwcm90ZWN0ZWQgdHlwZTogc3RyaW5nID0gXCJjb21wb25lbnRcIjtcclxuICAgIC8qKlxyXG4gICAgICogVHJ1ZSBpZiBpbml0aWFsaXplZCwgZmFsc2Ugb3RoZXJ3aXNlLlxyXG4gICAgICpcclxuICAgICAqIEBwcm90ZWN0ZWRcclxuICAgICAqIEB0eXBlIHtib29sZWFufVxyXG4gICAgICogQG1lbWJlcm9mIENvbXBvbmVudFxyXG4gICAgICovXHJcbiAgICBwcm90ZWN0ZWQgaXNJbml0aWFsaXplZDogYm9vbGVhbiA9IGZhbHNlO1xyXG4gICAgLyoqXHJcbiAgICAgKiBJZiByZUluaXQgaXMgdHJ1ZSwgdGhlIGNvbXBvbmVudCBtYXkgaGF2ZSBuZXcgcmVzb3VyY2VzIHRvIGluaXRpYWxpemUgc28gY29tcG9uZW5ldCBtYW5hZ2VyIHdpbGwga25vdyB0byBpbml0aWFsaXplIGFnYWluLlxyXG4gICAgICpcclxuICAgICAqIEBwcm90ZWN0ZWRcclxuICAgICAqIEB0eXBlIHtib29sZWFufVxyXG4gICAgICogQG1lbWJlcm9mIENvbXBvbmVudFxyXG4gICAgICovXHJcbiAgICBwcm90ZWN0ZWQgcmVJbml0OiBib29sZWFuID0gdHJ1ZTtcclxuICAgIC8qKlxyXG4gICAgICogSWYgdHJ1ZSwgcmVzb3VyY2VzIGFyZSBmcmVlZCBhbmQgdGhlIGNvbXBvbmVudCBpcyB1bmluaXRpYWxpemVkLiBJdCBzdGlsbCBleGlzdHMgaW4gY29tcG9uZW50IG1hbmFnZXIgZm9yIGxhdGVyIGluaXRpYWxpemF0aW9uLlxyXG4gICAgICpcclxuICAgICAqIEBwcm90ZWN0ZWRcclxuICAgICAqIEB0eXBlIHtib29sZWFufVxyXG4gICAgICogQG1lbWJlcm9mIENvbXBvbmVudFxyXG4gICAgICovXHJcbiAgICBwcm90ZWN0ZWQgcmVxdWVzdFNodXRkb3duOiBib29sZWFuID0gZmFsc2U7XHJcbiAgICAvLyNlbmRyZWdpb25cclxuICAgIFxyXG4gICAgLyoqXHJcbiAgICAgKiBDcmVhdGVzIGFuIGluc3RhbmNlIG9mIENvbXBvbmVudC5cclxuICAgICAqIEBwYXJhbSB7c3RyaW5nfSBuYW1lXHJcbiAgICAgKiBAcGFyYW0ge3N0cmluZ30gdHlwZVxyXG4gICAgICogQG1lbWJlcm9mIENvbXBvbmVudFxyXG4gICAgICovXHJcbiAgICBjb25zdHJ1Y3RvcihuYW1lOiBzdHJpbmcsIHR5cGU6IHN0cmluZykge1xyXG4gICAgICAgIHRoaXMubmFtZSA9IG5hbWU7XHJcbiAgICAgICAgdGhpcy50eXBlID0gdHlwZTtcclxuICAgIH1cclxuXHJcbiAgICAvLyNyZWdpb24gQWNjZXNzb3JzXHJcbiAgICAvKipcclxuICAgICAqIFJldHVybnMgd2hldGhlciBvciBub3QgdGhpcyBjb21wb25lbnQgaXMgaW5pdGlhbGl6ZWQuXHJcbiAgICAgKlxyXG4gICAgICogQHJlYWRvbmx5XHJcbiAgICAgKiBAdHlwZSB7Ym9vbGVhbn1cclxuICAgICAqIEBtZW1iZXJvZiBDb21wb25lbnRcclxuICAgICAqL1xyXG4gICAgcHVibGljIGdldCBJc0luaXRpYWxpemVkKCk6IGJvb2xlYW4ge1xyXG4gICAgICAgIHJldHVybiB0aGlzLmlzSW5pdGlhbGl6ZWQ7XHJcbiAgICB9XHJcblxyXG4gICAgLyoqXHJcbiAgICAgKiBSZXR1cm5zIHdoZXRoZXIgb3Igbm90IHRoaXMgY29tcG9uZW50IG5lZWRzIHRvIGJlIHJlaW5pdGlhbGl6ZWRcclxuICAgICAqXHJcbiAgICAgKiBAcmVhZG9ubHlcclxuICAgICAqIEB0eXBlIHtib29sZWFufVxyXG4gICAgICogQG1lbWJlcm9mIENvbXBvbmVudFxyXG4gICAgICovXHJcbiAgICBwdWJsaWMgZ2V0IFJlSW5pdCgpOiBib29sZWFuIHtcclxuICAgICAgICByZXR1cm4gdGhpcy5yZUluaXQ7XHJcbiAgICB9XHJcbiAgICAvKipcclxuICAgICAqIFRoaXMgd2lsbCBtYXJrIHRoZSBjb21wb25lbnQgaW4gY29tcG9uZW50IG1hbmFnZXIgZm9yIHJlaW5pdGlhbGl6YXRpb24uXHJcbiAgICAgKlxyXG4gICAgICogQG1lbWJlcm9mIENvbXBvbmVudFxyXG4gICAgICovXHJcbiAgICBwdWJsaWMgUmVJbml0aWFsaXplKCk6IHZvaWQge1xyXG4gICAgICAgIHRoaXMucmVJbml0ID0gdHJ1ZTtcclxuICAgICAgICB0aGlzLmlzSW5pdGlhbGl6ZWQgPSBmYWxzZTtcclxuICAgIH1cclxuXHJcbiAgICAvKipcclxuICAgICAqIFJldHVybnMgaWYgdGhlIGNvbXBvbmVudCBoYXMgYmVlbiBtYXJrZWQgZm9yIHNodXRkb3duLlxyXG4gICAgICpcclxuICAgICAqIEByZXR1cm4geyp9ICB7Ym9vbGVhbn1cclxuICAgICAqIEBtZW1iZXJvZiBDb21wb25lbnRcclxuICAgICAqL1xyXG4gICAgcHVibGljIFNodXRkb3duUmVxdWVzdGVkKCk6IGJvb2xlYW4ge1xyXG4gICAgICAgIHJldHVybiB0aGlzLnJlcXVlc3RTaHV0ZG93bjtcclxuICAgIH1cclxuXHJcbiAgICAvKipcclxuICAgICAqIE1hcmtzIHRoZSBjb21wb25lbnQgZm9yIHNodXRkb3duLlxyXG4gICAgICpcclxuICAgICAqIEBtZW1iZXJvZiBDb21wb25lbnRcclxuICAgICAqL1xyXG4gICAgcHVibGljIFJlcXVlc3RTaHV0ZG93bigpOiB2b2lkIHtcclxuICAgICAgICB0aGlzLnJlcXVlc3RTaHV0ZG93biA9IHRydWU7XHJcbiAgICB9XHJcbiAgICAvLyNlbmRyZWdpb25cclxuXHJcbiAgICAvLyNyZWdpb24gQ29udHJvbCBNZXRob2QgT3ZlcnJpZGVzXHJcbiAgICAvLyBDb3JlIGZ1bmN0aW9ucy5cclxuICAgIC8qKlxyXG4gICAgICogSW5pdGlhbGl6ZSB0aGUgY29tcG9uZW50IGFuZCBtYXJrIGl0IGFzIGluaXRpYWxpemVkIGlmIHN1Y2Nlc3NmdWwuXHJcbiAgICAgKiBUaGlzIGlzIGFuIG92ZXJyaWRlXHJcbiAgICAgKlxyXG4gICAgICogQHJldHVybiB7Kn0gIHtib29sZWFufVxyXG4gICAgICogQG1lbWJlcm9mIENvbXBvbmVudFxyXG4gICAgICovXHJcbiAgICBwdWJsaWMgVkluaXQoKTogYm9vbGVhbiB7XHJcbiAgICAgICAgdGhpcy5yZUluaXQgPSBmYWxzZTtcclxuICAgICAgICByZXR1cm4gdGhpcy5pc0luaXRpYWxpemVkO1xyXG4gICAgfVxyXG5cclxuICAgIC8qKlxyXG4gICAgICogSWYgSW5pdGlhbGl6ZWQsIHJ1biB0aGUgdXBkYXRlIGZ1bmN0aW9uLlxyXG4gICAgICogVGhpcyBpcyBhbiBvdmVycmlkZVxyXG4gICAgICpcclxuICAgICAqIEBtZW1iZXJvZiBDb21wb25lbnRcclxuICAgICAqL1xyXG4gICAgcHVibGljIFZVcGRhdGUoKTogdm9pZCB7XHJcbiAgICAgICAgaWYgKCF0aGlzLmlzSW5pdGlhbGl6ZWQpIHtcclxuICAgICAgICAgICAgY29uc29sZS5lcnJvcihcIkNvbXBvbmVudDogVlVwZGF0ZSgpIC0+IENvbXBvbmVudCBub3QgaW5pdGlhbGl6ZWQhIENvdWxkIG5vdCB1cGRhdGUgY29tcG9uZW50IFtcIiArIHRoaXMubmFtZSArIFwiXSBvZiB0eXBlIDxcIiArIHRoaXMudHlwZSArIFwiPi5cIik7XHJcbiAgICAgICAgfVxyXG4gICAgfVxyXG5cclxuICAgIC8qKlxyXG4gICAgICogVGhpcyBpcyBvbmx5IGNhbGxlZCBieSBjb21wb25lbnQgbWFuYWdlciBpZiByZXF1ZXN0U2h1dGRvd24gPT09IHRydWVcclxuICAgICAqIFRoaXMgaXMgYW4gb3ZlcnJpZGVcclxuICAgICAqXHJcbiAgICAgKiBAbWVtYmVyb2YgQ29tcG9uZW50XHJcbiAgICAgKi9cclxuICAgIHB1YmxpYyBWU2h1dGRvd24oKTogdm9pZCB7XHJcbiAgICAgICAgdGhpcy5pc0luaXRpYWxpemVkID0gZmFsc2U7XHJcbiAgICAgICAgdGhpcy5yZXF1ZXN0U2h1dGRvd24gPSBmYWxzZTtcclxuICAgIH1cclxuICAgIC8vIEVORCBPVkVSUklERVNcclxuICAgIC8vI2VuZHJlZ2lvblxyXG5cclxuICAgIC8vI3JlZ2lvbiBOYW1lIGFuZCBUeXBlIHJldHJpZXZhbCBmdW5jdGlvbnNcclxuICAgIC8qKlxyXG4gICAgICogUmV0dXJucyB0aGUgc2V0IG5hbWUgb2YgdGhpcyBjb21wb25lbnQuXHJcbiAgICAgKlxyXG4gICAgICogQHJldHVybiB7Kn0gIHtzdHJpbmd9XHJcbiAgICAgKiBAbWVtYmVyb2YgQ29tcG9uZW50XHJcbiAgICAgKi9cclxuICAgIHB1YmxpYyBWR2V0TmFtZSgpOiBzdHJpbmcge1xyXG4gICAgICAgIHJldHVybiB0aGlzLm5hbWU7XHJcbiAgICB9XHJcblxyXG4gICAgLyoqXHJcbiAgICAgKiBSZXR1cm5zIHRoZSBzZXQgc3ViLXR5cGUgb2YgdGhpcyBjb21wb25lbnQuXHJcbiAgICAgKlxyXG4gICAgICogQHJldHVybiB7Kn0gIHtzdHJpbmd9XHJcbiAgICAgKiBAbWVtYmVyb2YgQ29tcG9uZW50XHJcbiAgICAgKi9cclxuICAgIHB1YmxpYyBWR2V0VHlwZSgpOiBzdHJpbmcge1xyXG4gICAgICAgIHJldHVybiB0aGlzLnR5cGU7XHJcbiAgICB9XHJcbiAgICAvLyNlbmRyZWdpb25cclxufSJdfQ==</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-actors_actor-factory.html">actors/actor-factory</a></li><li><a href="module-components_component.html">components/component</a></li><li><a href="module-components_component-manager.html">components/component-manager</a></li><li><a href="module-components_types_renderer.html">components/types/renderer</a></li><li><a href="module-game-logic_base-game-logic.html">game-logic/base-game-logic</a></li><li><a href="module-game-logic_game-state-interface.html">game-logic/game-state-interface</a></li><li><a href="module-game-logic_game-state-manager.html">game-logic/game-state-manager</a></li><li><a href="module-game-views_game-view-interface.html">game-views/game-view-interface</a></li><li><a href="module-game-views_game-view-manager.html">game-views/game-view-manager</a></li><li><a href="module-game-views_types_human-view.html">game-views/types/human-view</a></li><li><a href="module-game_game-core.html">game/game-core</a></li><li><a href="module-system_system-dialog.html">system/system-dialog</a></li></ul><h3>Classes</h3><ul><li><a href="ActorFactory.ActorFactory.html">ActorFactory</a></li><li><a href="BaseGameLogic.BaseGameLogic.html">BaseGameLogic</a></li><li><a href="Component.Component.html">Component</a></li><li><a href="ComponentManager.ComponentManager.html">ComponentManager</a></li><li><a href="GameCore.GameCore.html">GameCore</a></li><li><a href="HumanView.HumanView.html">HumanView</a></li><li><a href="module-actors_actor-factory-ActorFactory.html">ActorFactory</a></li><li><a href="module-components_component-manager-ComponentManager.html">ComponentManager</a></li><li><a href="module-components_component-Component.html">Component</a></li><li><a href="module-components_types_renderer-Renderer.html">Renderer</a></li><li><a href="module-game-logic_base-game-logic-BaseGameLogic.html">BaseGameLogic</a></li><li><a href="module-game-logic_game-state-manager-StateManager.html">StateManager</a></li><li><a href="module-game-views_game-view-manager-ViewManager.html">ViewManager</a></li><li><a href="module-game-views_types_human-view-HumanView.html">HumanView</a></li><li><a href="module-game_game-core-GameCore.html">GameCore</a></li><li><a href="module-system_system-dialog-SystemDialog.html">SystemDialog</a></li><li><a href="Renderer.Renderer.html">Renderer</a></li><li><a href="StateManager.StateManager.html">StateManager</a></li><li><a href="SystemDialog.SystemDialog.html">SystemDialog</a></li><li><a href="ViewManager.ViewManager.html">ViewManager</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Oct 19 2020 19:25:13 GMT-0500 (Central Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

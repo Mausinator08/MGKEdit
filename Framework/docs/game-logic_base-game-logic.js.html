@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: game-logic/base-game-logic.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: game-logic/base-game-logic.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+/** @module game-logic/base-game-logic */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BaseGameLogic = void 0;
+//#region Imports
+const game_core_1 = require("./../game/game-core");
+const game_view_manager_1 = require("../game-views/game-view-manager");
+const game_state_manager_1 = require("./game-state-manager");
+//#endregion
+/**
+ *
+ *
+ * @export
+ * @class BaseGameLogic
+ */
+class BaseGameLogic {
+    //#endregion
+    /**
+     * Creates an instance of BaseGameLogic.
+     * @param {string} viewPath
+     * @param {string} statePath
+     * @memberof BaseGameLogic
+     */
+    constructor(viewPath, statePath) {
+        /**
+         * Whether logic is paused. (Rendering continues)
+         *
+         * @protected
+         * @type {boolean}
+         * @memberof BaseGameLogic
+         */
+        this.paused = false;
+        /**
+         * Stores whether logic has been initialized.
+         *
+         * @protected
+         * @type {boolean}
+         * @memberof BaseGameLogic
+         */
+        this.isInitialized = false;
+        /**
+         * Is this the server or just the client game logic.
+         *
+         * @type {boolean}
+         * @memberof BaseGameLogic
+         */
+        this.isServerLogic = false;
+        /**
+         * A string list of the names of the views created in preInitFunc function.
+         *
+         * @type {string[]}
+         * @memberof BaseGameLogic
+         */
+        this.createdViews = [];
+        /**
+         * Stores whether we a reinitializing the logic.
+         *
+         * @protected
+         * @type {boolean}
+         * @memberof BaseGameLogic
+         */
+        this.reInit = true;
+        /**
+         * Stores true when it's time for game logic to terminate.
+         *
+         * @protected
+         * @type {boolean}
+         * @memberof BaseGameLogic
+         */
+        this.requestShutdown = false;
+        this.viewMan = new game_view_manager_1.ViewManager(viewPath);
+        this.stateManager = new game_state_manager_1.StateManager(statePath);
+    }
+    //#region Control Method Overrides
+    // OVERRIDES
+    /**
+     * Accesses the members of the StateManager to manipulate the game's state with new game states.
+     * Override in game's specific game logic class.
+     *
+     * @param {string} name
+     * @param {string} type
+     * @memberof BaseGameLogic
+     */
+    CreateGameState(name, type) {
+    }
+    /**
+     * Initialize the game states that need it and create their views if not already.
+     * Override in game's specific game logic class.
+     *
+     * @return {*}  {boolean}
+     * @memberof BaseGameLogic
+     */
+    VInit() {
+        if (this.reInit === true) {
+            if (this.preInitFunc !== null) {
+                if (this.preInitFunc(this) === false) {
+                    game_core_1.GameCore.game.Quit();
+                    return false;
+                }
+                else {
+                    this.viewMan.Init();
+                    this.isInitialized = true;
+                }
+            }
+        }
+        else {
+            this.viewMan.Init();
+        }
+        this.reInit = false;
+        return true;
+    }
+    /**
+     * Update the game logic. (If server, human view types are omitted. Servers do not directly interact with human input.)
+     * Override in game's specific game logic class.
+     *
+     * @return {*}  {void}
+     * @memberof BaseGameLogic
+     */
+    VUpdate() {
+        // Do not continue any further if we are not initialized or the game logic is paused.
+        if (this.paused === true || this.isInitialized === false) {
+            // At least check the human view if this is not set on a server so that a working dialog can still appear and be used for exit prompts and warnings/errors.
+            if (this.isServerLogic === true) {
+                // TODO: Something needs to check for whether or not we are shutting down the server here:
+                return;
+            }
+            // Render all humans!
+            if (this.viewMan.GetArrayByType("HumanView").length > 0) {
+                this.viewMan.GetArrayByType("HumanView").forEach(hv => {
+                    if (hv.VIsInitialized() === true) {
+                        hv.VUpdate();
+                    }
+                });
+            }
+            return;
+        }
+        // Update views that have autoUpdate set to true;
+        this.viewMan.Update();
+        // If this is the game server, no further updates are needed. (No HumanViews on game server... DESTROY ALL HUMANS! "Um... Lambert? Am I being stealthy enough?" : "Keep it up Fisher, you're doing great!")
+        if (this.isServerLogic === true) {
+            return;
+        }
+        // Render all humans!
+        if (this.viewMan.GetArrayByType("HumanView").length > 0) {
+            this.viewMan.GetArrayByType("HumanView").forEach(hv => {
+                if (hv.VIsInitialized() === true) {
+                    hv.VUpdate();
+                }
+            });
+        }
+    }
+    /**
+     * Shutdown game logic components that need to be, and if quitting, then all of it gets shutdown.
+     * Override in game's specific game logic class.
+     *
+     * @memberof BaseGameLogic
+     */
+    VShutdown() {
+        this.viewMan.Shutdown();
+        if (game_core_1.GameCore.game.Quitting() === true) {
+            this.viewMan.Clear();
+            this.isInitialized = false;
+        }
+    }
+}
+exports.BaseGameLogic = BaseGameLogic;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYmFzZS1nYW1lLWxvZ2ljLmpzIiwic291cmNlUm9vdCI6Ikc6L1dvcmtzcGFjZXMvTUdLRWRpdC8uLi8iLCJzb3VyY2VzIjpbIk1HS0ZyYW1ld29ya0pTL3NyYy9nYW1lLWxvZ2ljL2Jhc2UtZ2FtZS1sb2dpYy50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiO0FBQUEseUNBQXlDOzs7QUFFekMsaUJBQWlCO0FBQ2pCLG1EQUErQztBQUMvQyx1RUFBOEQ7QUFHOUQsNkRBQW9EO0FBQ3BELFlBQVk7QUFFWjs7Ozs7R0FLRztBQUNILE1BQWEsYUFBYTtJQXNFdEIsWUFBWTtJQUVaOzs7OztPQUtHO0lBQ0gsWUFBWSxRQUFnQixFQUFFLFNBQWlCO1FBckUvQzs7Ozs7O1dBTUc7UUFDTyxXQUFNLEdBQVksS0FBSyxDQUFDO1FBQ2xDOzs7Ozs7V0FNRztRQUNPLGtCQUFhLEdBQVksS0FBSyxDQUFDO1FBQ3pDOzs7OztXQUtHO1FBQ0ksa0JBQWEsR0FBWSxLQUFLLENBQUM7UUFRdEM7Ozs7O1dBS0c7UUFDSSxpQkFBWSxHQUFhLEVBQUUsQ0FBQztRQUNuQzs7Ozs7O1dBTUc7UUFDTyxXQUFNLEdBQVksSUFBSSxDQUFDO1FBQ2pDOzs7Ozs7V0FNRztRQUNPLG9CQUFlLEdBQVksS0FBSyxDQUFDO1FBa0J2QyxJQUFJLENBQUMsT0FBTyxHQUFHLElBQUksK0JBQVcsQ0FBQyxRQUFRLENBQUMsQ0FBQztRQUN6QyxJQUFJLENBQUMsWUFBWSxHQUFHLElBQUksaUNBQVksQ0FBQyxTQUFTLENBQUMsQ0FBQztJQUNwRCxDQUFDO0lBRUQsa0NBQWtDO0lBQ2xDLFlBQVk7SUFDWjs7Ozs7OztPQU9HO0lBQ0ksZUFBZSxDQUFDLElBQVksRUFBRSxJQUFZO0lBRWpELENBQUM7SUFFRDs7Ozs7O09BTUc7SUFDSSxLQUFLO1FBQ1IsSUFBSSxJQUFJLENBQUMsTUFBTSxLQUFLLElBQUksRUFBRTtZQUN0QixJQUFJLElBQUksQ0FBQyxXQUFXLEtBQUssSUFBSSxFQUFFO2dCQUMzQixJQUFJLElBQUksQ0FBQyxXQUFXLENBQUMsSUFBSSxDQUFDLEtBQUssS0FBSyxFQUFFO29CQUNsQyxvQkFBUSxDQUFDLElBQUksQ0FBQyxJQUFJLEVBQUUsQ0FBQztvQkFDckIsT0FBTyxLQUFLLENBQUM7aUJBQ2hCO3FCQUFNO29CQUNILElBQUksQ0FBQyxPQUFPLENBQUMsSUFBSSxFQUFFLENBQUM7b0JBQ3BCLElBQUksQ0FBQyxhQUFhLEdBQUcsSUFBSSxDQUFDO2lCQUM3QjthQUNKO1NBQ0o7YUFBTTtZQUNILElBQUksQ0FBQyxPQUFPLENBQUMsSUFBSSxFQUFFLENBQUM7U0FDdkI7UUFFRCxJQUFJLENBQUMsTUFBTSxHQUFHLEtBQUssQ0FBQztRQUNwQixPQUFPLElBQUksQ0FBQztJQUNoQixDQUFDO0lBRUQ7Ozs7OztPQU1HO0lBQ0ksT0FBTztRQUNWLHFGQUFxRjtRQUNyRixJQUFJLElBQUksQ0FBQyxNQUFNLEtBQUssSUFBSSxJQUFJLElBQUksQ0FBQyxhQUFhLEtBQUssS0FBSyxFQUFFO1lBQ3RELDJKQUEySjtZQUMzSixJQUFJLElBQUksQ0FBQyxhQUFhLEtBQUssSUFBSSxFQUFFO2dCQUM3QiwwRkFBMEY7Z0JBQzFGLE9BQU87YUFDVjtZQUVELHFCQUFxQjtZQUNyQixJQUFJLElBQUksQ0FBQyxPQUFPLENBQUMsY0FBYyxDQUFZLFdBQVcsQ0FBQyxDQUFDLE1BQU0sR0FBRyxDQUFDLEVBQUU7Z0JBQ2hFLElBQUksQ0FBQyxPQUFPLENBQUMsY0FBYyxDQUFZLFdBQVcsQ0FBQyxDQUFDLE9BQU8sQ0FBQyxFQUFFLENBQUMsRUFBRTtvQkFDN0QsSUFBSSxFQUFFLENBQUMsY0FBYyxFQUFFLEtBQUssSUFBSSxFQUFFO3dCQUM5QixFQUFFLENBQUMsT0FBTyxFQUFFLENBQUM7cUJBQ2hCO2dCQUNMLENBQUMsQ0FBQyxDQUFDO2FBQ047WUFFRCxPQUFPO1NBQ1Y7UUFFRCxpREFBaUQ7UUFDakQsSUFBSSxDQUFDLE9BQU8sQ0FBQyxNQUFNLEVBQUUsQ0FBQztRQUV0QiwyTUFBMk07UUFDM00sSUFBSSxJQUFJLENBQUMsYUFBYSxLQUFLLElBQUksRUFBRTtZQUM3QixPQUFPO1NBQ1Y7UUFFRCxxQkFBcUI7UUFDckIsSUFBSSxJQUFJLENBQUMsT0FBTyxDQUFDLGNBQWMsQ0FBWSxXQUFXLENBQUMsQ0FBQyxNQUFNLEdBQUcsQ0FBQyxFQUFFO1lBQ2hFLElBQUksQ0FBQyxPQUFPLENBQUMsY0FBYyxDQUFZLFdBQVcsQ0FBQyxDQUFDLE9BQU8sQ0FBQyxFQUFFLENBQUMsRUFBRTtnQkFDN0QsSUFBSSxFQUFFLENBQUMsY0FBYyxFQUFFLEtBQUssSUFBSSxFQUFFO29CQUM5QixFQUFFLENBQUMsT0FBTyxFQUFFLENBQUM7aUJBQ2hCO1lBQ0wsQ0FBQyxDQUFDLENBQUM7U0FDTjtJQUNMLENBQUM7SUFFRDs7Ozs7T0FLRztJQUNJLFNBQVM7UUFDWixJQUFJLENBQUMsT0FBTyxDQUFDLFFBQVEsRUFBRSxDQUFDO1FBRXhCLElBQUksb0JBQVEsQ0FBQyxJQUFJLENBQUMsUUFBUSxFQUFFLEtBQUssSUFBSSxFQUFFO1lBQ25DLElBQUksQ0FBQyxPQUFPLENBQUMsS0FBSyxFQUFFLENBQUM7WUFDckIsSUFBSSxDQUFDLGFBQWEsR0FBRyxLQUFLLENBQUM7U0FDOUI7SUFDTCxDQUFDO0NBR0o7QUF6TEQsc0NBeUxDIiwic291cmNlc0NvbnRlbnQiOlsiLyoqIEBtb2R1bGUgZ2FtZS1sb2dpYy9iYXNlLWdhbWUtbG9naWMgKi9cclxuXHJcbi8vI3JlZ2lvbiBJbXBvcnRzXHJcbmltcG9ydCB7IEdhbWVDb3JlIH0gZnJvbSBcIi4vLi4vZ2FtZS9nYW1lLWNvcmVcIjtcclxuaW1wb3J0IHsgVmlld01hbmFnZXIgfSBmcm9tIFwiLi4vZ2FtZS12aWV3cy9nYW1lLXZpZXctbWFuYWdlclwiO1xyXG5pbXBvcnQgeyBIdW1hblZpZXcgfSBmcm9tIFwiLi8uLi9nYW1lLXZpZXdzL3R5cGVzL2h1bWFuLXZpZXdcIjtcclxuaW1wb3J0IHsgSUdhbWVTdGF0ZSB9IGZyb20gXCIuL2dhbWUtc3RhdGUtaW50ZXJmYWNlXCI7XHJcbmltcG9ydCB7IFN0YXRlTWFuYWdlciB9IGZyb20gXCIuL2dhbWUtc3RhdGUtbWFuYWdlclwiO1xyXG4vLyNlbmRyZWdpb25cclxuXHJcbi8qKlxyXG4gKlxyXG4gKlxyXG4gKiBAZXhwb3J0XHJcbiAqIEBjbGFzcyBCYXNlR2FtZUxvZ2ljXHJcbiAqL1xyXG5leHBvcnQgY2xhc3MgQmFzZUdhbWVMb2dpYyB7XHJcbiAgICAvLyNyZWdpb24gRmllbGRzXHJcbiAgICAvKipcclxuICAgICAqIFRoaXMgaXMgY2FsbGVkIGZyb20gdGhlIHN1YmNsYXNzJ3MgcHJlaW5pdCBmdW5jdGlvbiBiZWZvcmUgYW55dGhpbmcgZWxzZS4gKENyZWF0ZXMgdGhlIG1pbmltYWwgdmlld3MgYW5kIHNldHVwLilcclxuICAgICAqXHJcbiAgICAgKiBAdHlwZSB7RnVuY3Rpb259XHJcbiAgICAgKiBAbWVtYmVyb2YgQmFzZUdhbWVMb2dpY1xyXG4gICAgICovXHJcbiAgICBwdWJsaWMgcHJlSW5pdEZ1bmM6IEZ1bmN0aW9uO1xyXG4gICAgLyoqXHJcbiAgICAgKiBXaGV0aGVyIGxvZ2ljIGlzIHBhdXNlZC4gKFJlbmRlcmluZyBjb250aW51ZXMpXHJcbiAgICAgKlxyXG4gICAgICogQHByb3RlY3RlZFxyXG4gICAgICogQHR5cGUge2Jvb2xlYW59XHJcbiAgICAgKiBAbWVtYmVyb2YgQmFzZUdhbWVMb2dpY1xyXG4gICAgICovXHJcbiAgICBwcm90ZWN0ZWQgcGF1c2VkOiBib29sZWFuID0gZmFsc2U7XHJcbiAgICAvKipcclxuICAgICAqIFN0b3JlcyB3aGV0aGVyIGxvZ2ljIGhhcyBiZWVuIGluaXRpYWxpemVkLlxyXG4gICAgICpcclxuICAgICAqIEBwcm90ZWN0ZWRcclxuICAgICAqIEB0eXBlIHtib29sZWFufVxyXG4gICAgICogQG1lbWJlcm9mIEJhc2VHYW1lTG9naWNcclxuICAgICAqL1xyXG4gICAgcHJvdGVjdGVkIGlzSW5pdGlhbGl6ZWQ6IGJvb2xlYW4gPSBmYWxzZTtcclxuICAgIC8qKlxyXG4gICAgICogSXMgdGhpcyB0aGUgc2VydmVyIG9yIGp1c3QgdGhlIGNsaWVudCBnYW1lIGxvZ2ljLlxyXG4gICAgICpcclxuICAgICAqIEB0eXBlIHtib29sZWFufVxyXG4gICAgICogQG1lbWJlcm9mIEJhc2VHYW1lTG9naWNcclxuICAgICAqL1xyXG4gICAgcHVibGljIGlzU2VydmVyTG9naWM6IGJvb2xlYW4gPSBmYWxzZTtcclxuICAgIC8qKlxyXG4gICAgICogVGhlIHZpZXcgbWFuYWdlci4gKFRoZSBodW1hbiB2aWV3KHMpIGNvbnRhaW4ocykgdGhlIHJlbmRlcmluZyBzY2VuZSBhbmQgdXNlciBpbnB1dC4gT3RoZXIgdmlldyB0eXBlcyBjYW4gYmUgaW5zZXJ0ZWQgaW4gdGhlIHZpZXcgbWFuYWdlci4pXHJcbiAgICAgKlxyXG4gICAgICogQHR5cGUge1ZpZXdNYW5hZ2VyfVxyXG4gICAgICogQG1lbWJlcm9mIEJhc2VHYW1lTG9naWNcclxuICAgICAqL1xyXG4gICAgcHVibGljIHZpZXdNYW46IFZpZXdNYW5hZ2VyO1xyXG4gICAgLyoqXHJcbiAgICAgKiBBIHN0cmluZyBsaXN0IG9mIHRoZSBuYW1lcyBvZiB0aGUgdmlld3MgY3JlYXRlZCBpbiBwcmVJbml0RnVuYyBmdW5jdGlvbi5cclxuICAgICAqXHJcbiAgICAgKiBAdHlwZSB7c3RyaW5nW119XHJcbiAgICAgKiBAbWVtYmVyb2YgQmFzZUdhbWVMb2dpY1xyXG4gICAgICovXHJcbiAgICBwdWJsaWMgY3JlYXRlZFZpZXdzOiBzdHJpbmdbXSA9IFtdO1xyXG4gICAgLyoqXHJcbiAgICAgKiBTdG9yZXMgd2hldGhlciB3ZSBhIHJlaW5pdGlhbGl6aW5nIHRoZSBsb2dpYy5cclxuICAgICAqXHJcbiAgICAgKiBAcHJvdGVjdGVkXHJcbiAgICAgKiBAdHlwZSB7Ym9vbGVhbn1cclxuICAgICAqIEBtZW1iZXJvZiBCYXNlR2FtZUxvZ2ljXHJcbiAgICAgKi9cclxuICAgIHByb3RlY3RlZCByZUluaXQ6IGJvb2xlYW4gPSB0cnVlO1xyXG4gICAgLyoqXHJcbiAgICAgKiBTdG9yZXMgdHJ1ZSB3aGVuIGl0J3MgdGltZSBmb3IgZ2FtZSBsb2dpYyB0byB0ZXJtaW5hdGUuXHJcbiAgICAgKlxyXG4gICAgICogQHByb3RlY3RlZFxyXG4gICAgICogQHR5cGUge2Jvb2xlYW59XHJcbiAgICAgKiBAbWVtYmVyb2YgQmFzZUdhbWVMb2dpY1xyXG4gICAgICovXHJcbiAgICBwcm90ZWN0ZWQgcmVxdWVzdFNodXRkb3duOiBib29sZWFuID0gZmFsc2U7XHJcbiAgICAvKipcclxuICAgICAqIFRoaXMgbWFuYWdlcyB0aGUgdmFyaW91cyBzdGF0ZXMgb2YgdGhlIGdhbWUuIChNYWluIG1lbnUvbXVsdGlwbGF5ZXIgbWF0Y2gvY2FtcGFpZ24gb3Igc3RvcnkvbG9iYnkvc2V0dGluZ3MpXHJcbiAgICAgKlxyXG4gICAgICogQHByb3RlY3RlZFxyXG4gICAgICogQHR5cGUge1N0YXRlTWFuYWdlcn1cclxuICAgICAqIEBtZW1iZXJvZiBCYXNlR2FtZUxvZ2ljXHJcbiAgICAgKi9cclxuICAgIHByb3RlY3RlZCBzdGF0ZU1hbmFnZXI6IFN0YXRlTWFuYWdlcjtcclxuICAgIC8vI2VuZHJlZ2lvblxyXG5cclxuICAgIC8qKlxyXG4gICAgICogQ3JlYXRlcyBhbiBpbnN0YW5jZSBvZiBCYXNlR2FtZUxvZ2ljLlxyXG4gICAgICogQHBhcmFtIHtzdHJpbmd9IHZpZXdQYXRoXHJcbiAgICAgKiBAcGFyYW0ge3N0cmluZ30gc3RhdGVQYXRoXHJcbiAgICAgKiBAbWVtYmVyb2YgQmFzZUdhbWVMb2dpY1xyXG4gICAgICovXHJcbiAgICBjb25zdHJ1Y3Rvcih2aWV3UGF0aDogc3RyaW5nLCBzdGF0ZVBhdGg6IHN0cmluZykge1xyXG4gICAgICAgIHRoaXMudmlld01hbiA9IG5ldyBWaWV3TWFuYWdlcih2aWV3UGF0aCk7XHJcbiAgICAgICAgdGhpcy5zdGF0ZU1hbmFnZXIgPSBuZXcgU3RhdGVNYW5hZ2VyKHN0YXRlUGF0aCk7XHJcbiAgICB9XHJcblxyXG4gICAgLy8jcmVnaW9uIENvbnRyb2wgTWV0aG9kIE92ZXJyaWRlc1xyXG4gICAgLy8gT1ZFUlJJREVTXHJcbiAgICAvKipcclxuICAgICAqIEFjY2Vzc2VzIHRoZSBtZW1iZXJzIG9mIHRoZSBTdGF0ZU1hbmFnZXIgdG8gbWFuaXB1bGF0ZSB0aGUgZ2FtZSdzIHN0YXRlIHdpdGggbmV3IGdhbWUgc3RhdGVzLlxyXG4gICAgICogT3ZlcnJpZGUgaW4gZ2FtZSdzIHNwZWNpZmljIGdhbWUgbG9naWMgY2xhc3MuXHJcbiAgICAgKiBcclxuICAgICAqIEBwYXJhbSB7c3RyaW5nfSBuYW1lXHJcbiAgICAgKiBAcGFyYW0ge3N0cmluZ30gdHlwZVxyXG4gICAgICogQG1lbWJlcm9mIEJhc2VHYW1lTG9naWNcclxuICAgICAqL1xyXG4gICAgcHVibGljIENyZWF0ZUdhbWVTdGF0ZShuYW1lOiBzdHJpbmcsIHR5cGU6IHN0cmluZyk6IHZvaWQge1xyXG5cclxuICAgIH1cclxuXHJcbiAgICAvKipcclxuICAgICAqIEluaXRpYWxpemUgdGhlIGdhbWUgc3RhdGVzIHRoYXQgbmVlZCBpdCBhbmQgY3JlYXRlIHRoZWlyIHZpZXdzIGlmIG5vdCBhbHJlYWR5LlxyXG4gICAgICogT3ZlcnJpZGUgaW4gZ2FtZSdzIHNwZWNpZmljIGdhbWUgbG9naWMgY2xhc3MuXHJcbiAgICAgKlxyXG4gICAgICogQHJldHVybiB7Kn0gIHtib29sZWFufVxyXG4gICAgICogQG1lbWJlcm9mIEJhc2VHYW1lTG9naWNcclxuICAgICAqL1xyXG4gICAgcHVibGljIFZJbml0KCk6IGJvb2xlYW4ge1xyXG4gICAgICAgIGlmICh0aGlzLnJlSW5pdCA9PT0gdHJ1ZSkge1xyXG4gICAgICAgICAgICBpZiAodGhpcy5wcmVJbml0RnVuYyAhPT0gbnVsbCkge1xyXG4gICAgICAgICAgICAgICAgaWYgKHRoaXMucHJlSW5pdEZ1bmModGhpcykgPT09IGZhbHNlKSB7XHJcbiAgICAgICAgICAgICAgICAgICAgR2FtZUNvcmUuZ2FtZS5RdWl0KCk7XHJcbiAgICAgICAgICAgICAgICAgICAgcmV0dXJuIGZhbHNlO1xyXG4gICAgICAgICAgICAgICAgfSBlbHNlIHtcclxuICAgICAgICAgICAgICAgICAgICB0aGlzLnZpZXdNYW4uSW5pdCgpO1xyXG4gICAgICAgICAgICAgICAgICAgIHRoaXMuaXNJbml0aWFsaXplZCA9IHRydWU7XHJcbiAgICAgICAgICAgICAgICB9XHJcbiAgICAgICAgICAgIH1cclxuICAgICAgICB9IGVsc2Uge1xyXG4gICAgICAgICAgICB0aGlzLnZpZXdNYW4uSW5pdCgpO1xyXG4gICAgICAgIH1cclxuXHJcbiAgICAgICAgdGhpcy5yZUluaXQgPSBmYWxzZTtcclxuICAgICAgICByZXR1cm4gdHJ1ZTtcclxuICAgIH1cclxuXHJcbiAgICAvKipcclxuICAgICAqIFVwZGF0ZSB0aGUgZ2FtZSBsb2dpYy4gKElmIHNlcnZlciwgaHVtYW4gdmlldyB0eXBlcyBhcmUgb21pdHRlZC4gU2VydmVycyBkbyBub3QgZGlyZWN0bHkgaW50ZXJhY3Qgd2l0aCBodW1hbiBpbnB1dC4pXHJcbiAgICAgKiBPdmVycmlkZSBpbiBnYW1lJ3Mgc3BlY2lmaWMgZ2FtZSBsb2dpYyBjbGFzcy5cclxuICAgICAqXHJcbiAgICAgKiBAcmV0dXJuIHsqfSAge3ZvaWR9XHJcbiAgICAgKiBAbWVtYmVyb2YgQmFzZUdhbWVMb2dpY1xyXG4gICAgICovXHJcbiAgICBwdWJsaWMgVlVwZGF0ZSgpOiB2b2lkIHtcclxuICAgICAgICAvLyBEbyBub3QgY29udGludWUgYW55IGZ1cnRoZXIgaWYgd2UgYXJlIG5vdCBpbml0aWFsaXplZCBvciB0aGUgZ2FtZSBsb2dpYyBpcyBwYXVzZWQuXHJcbiAgICAgICAgaWYgKHRoaXMucGF1c2VkID09PSB0cnVlIHx8IHRoaXMuaXNJbml0aWFsaXplZCA9PT0gZmFsc2UpIHtcclxuICAgICAgICAgICAgLy8gQXQgbGVhc3QgY2hlY2sgdGhlIGh1bWFuIHZpZXcgaWYgdGhpcyBpcyBub3Qgc2V0IG9uIGEgc2VydmVyIHNvIHRoYXQgYSB3b3JraW5nIGRpYWxvZyBjYW4gc3RpbGwgYXBwZWFyIGFuZCBiZSB1c2VkIGZvciBleGl0IHByb21wdHMgYW5kIHdhcm5pbmdzL2Vycm9ycy5cclxuICAgICAgICAgICAgaWYgKHRoaXMuaXNTZXJ2ZXJMb2dpYyA9PT0gdHJ1ZSkge1xyXG4gICAgICAgICAgICAgICAgLy8gVE9ETzogU29tZXRoaW5nIG5lZWRzIHRvIGNoZWNrIGZvciB3aGV0aGVyIG9yIG5vdCB3ZSBhcmUgc2h1dHRpbmcgZG93biB0aGUgc2VydmVyIGhlcmU6XHJcbiAgICAgICAgICAgICAgICByZXR1cm47XHJcbiAgICAgICAgICAgIH1cclxuXHJcbiAgICAgICAgICAgIC8vIFJlbmRlciBhbGwgaHVtYW5zIVxyXG4gICAgICAgICAgICBpZiAodGhpcy52aWV3TWFuLkdldEFycmF5QnlUeXBlPEh1bWFuVmlldz4oXCJIdW1hblZpZXdcIikubGVuZ3RoID4gMCkge1xyXG4gICAgICAgICAgICAgICAgdGhpcy52aWV3TWFuLkdldEFycmF5QnlUeXBlPEh1bWFuVmlldz4oXCJIdW1hblZpZXdcIikuZm9yRWFjaChodiA9PiB7XHJcbiAgICAgICAgICAgICAgICAgICAgaWYgKGh2LlZJc0luaXRpYWxpemVkKCkgPT09IHRydWUpIHtcclxuICAgICAgICAgICAgICAgICAgICAgICAgaHYuVlVwZGF0ZSgpO1xyXG4gICAgICAgICAgICAgICAgICAgIH1cclxuICAgICAgICAgICAgICAgIH0pO1xyXG4gICAgICAgICAgICB9XHJcblxyXG4gICAgICAgICAgICByZXR1cm47XHJcbiAgICAgICAgfVxyXG5cclxuICAgICAgICAvLyBVcGRhdGUgdmlld3MgdGhhdCBoYXZlIGF1dG9VcGRhdGUgc2V0IHRvIHRydWU7XHJcbiAgICAgICAgdGhpcy52aWV3TWFuLlVwZGF0ZSgpO1xyXG5cclxuICAgICAgICAvLyBJZiB0aGlzIGlzIHRoZSBnYW1lIHNlcnZlciwgbm8gZnVydGhlciB1cGRhdGVzIGFyZSBuZWVkZWQuIChObyBIdW1hblZpZXdzIG9uIGdhbWUgc2VydmVyLi4uIERFU1RST1kgQUxMIEhVTUFOUyEgXCJVbS4uLiBMYW1iZXJ0PyBBbSBJIGJlaW5nIHN0ZWFsdGh5IGVub3VnaD9cIiA6IFwiS2VlcCBpdCB1cCBGaXNoZXIsIHlvdSdyZSBkb2luZyBncmVhdCFcIilcclxuICAgICAgICBpZiAodGhpcy5pc1NlcnZlckxvZ2ljID09PSB0cnVlKSB7XHJcbiAgICAgICAgICAgIHJldHVybjtcclxuICAgICAgICB9XHJcblxyXG4gICAgICAgIC8vIFJlbmRlciBhbGwgaHVtYW5zIVxyXG4gICAgICAgIGlmICh0aGlzLnZpZXdNYW4uR2V0QXJyYXlCeVR5cGU8SHVtYW5WaWV3PihcIkh1bWFuVmlld1wiKS5sZW5ndGggPiAwKSB7XHJcbiAgICAgICAgICAgIHRoaXMudmlld01hbi5HZXRBcnJheUJ5VHlwZTxIdW1hblZpZXc+KFwiSHVtYW5WaWV3XCIpLmZvckVhY2goaHYgPT4ge1xyXG4gICAgICAgICAgICAgICAgaWYgKGh2LlZJc0luaXRpYWxpemVkKCkgPT09IHRydWUpIHtcclxuICAgICAgICAgICAgICAgICAgICBodi5WVXBkYXRlKCk7XHJcbiAgICAgICAgICAgICAgICB9XHJcbiAgICAgICAgICAgIH0pO1xyXG4gICAgICAgIH1cclxuICAgIH1cclxuXHJcbiAgICAvKipcclxuICAgICAqIFNodXRkb3duIGdhbWUgbG9naWMgY29tcG9uZW50cyB0aGF0IG5lZWQgdG8gYmUsIGFuZCBpZiBxdWl0dGluZywgdGhlbiBhbGwgb2YgaXQgZ2V0cyBzaHV0ZG93bi5cclxuICAgICAqIE92ZXJyaWRlIGluIGdhbWUncyBzcGVjaWZpYyBnYW1lIGxvZ2ljIGNsYXNzLlxyXG4gICAgICpcclxuICAgICAqIEBtZW1iZXJvZiBCYXNlR2FtZUxvZ2ljXHJcbiAgICAgKi9cclxuICAgIHB1YmxpYyBWU2h1dGRvd24oKTogdm9pZCB7XHJcbiAgICAgICAgdGhpcy52aWV3TWFuLlNodXRkb3duKCk7XHJcblxyXG4gICAgICAgIGlmIChHYW1lQ29yZS5nYW1lLlF1aXR0aW5nKCkgPT09IHRydWUpIHtcclxuICAgICAgICAgICAgdGhpcy52aWV3TWFuLkNsZWFyKCk7XHJcbiAgICAgICAgICAgIHRoaXMuaXNJbml0aWFsaXplZCA9IGZhbHNlO1xyXG4gICAgICAgIH1cclxuICAgIH1cclxuICAgIC8vIEVORCBPVkVSUklERVNcclxuICAgIC8vI2VuZHJlZ2lvblxyXG59Il19</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-actors_actor-factory.html">actors/actor-factory</a></li><li><a href="module-components_component.html">components/component</a></li><li><a href="module-components_component-manager.html">components/component-manager</a></li><li><a href="module-components_types_renderer.html">components/types/renderer</a></li><li><a href="module-game-logic_base-game-logic.html">game-logic/base-game-logic</a></li><li><a href="module-game-logic_game-state-interface.html">game-logic/game-state-interface</a></li><li><a href="module-game-logic_game-state-manager.html">game-logic/game-state-manager</a></li><li><a href="module-game-views_game-view-interface.html">game-views/game-view-interface</a></li><li><a href="module-game-views_game-view-manager.html">game-views/game-view-manager</a></li><li><a href="module-game-views_types_human-view.html">game-views/types/human-view</a></li><li><a href="module-game_game-core.html">game/game-core</a></li><li><a href="module-system_system-dialog.html">system/system-dialog</a></li></ul><h3>Classes</h3><ul><li><a href="ActorFactory.ActorFactory.html">ActorFactory</a></li><li><a href="BaseGameLogic.BaseGameLogic.html">BaseGameLogic</a></li><li><a href="Component.Component.html">Component</a></li><li><a href="ComponentManager.ComponentManager.html">ComponentManager</a></li><li><a href="GameCore.GameCore.html">GameCore</a></li><li><a href="HumanView.HumanView.html">HumanView</a></li><li><a href="module-actors_actor-factory-ActorFactory.html">ActorFactory</a></li><li><a href="module-components_component-manager-ComponentManager.html">ComponentManager</a></li><li><a href="module-components_component-Component.html">Component</a></li><li><a href="module-components_types_renderer-Renderer.html">Renderer</a></li><li><a href="module-game-logic_base-game-logic-BaseGameLogic.html">BaseGameLogic</a></li><li><a href="module-game-logic_game-state-manager-StateManager.html">StateManager</a></li><li><a href="module-game-views_game-view-manager-ViewManager.html">ViewManager</a></li><li><a href="module-game-views_types_human-view-HumanView.html">HumanView</a></li><li><a href="module-game_game-core-GameCore.html">GameCore</a></li><li><a href="module-system_system-dialog-SystemDialog.html">SystemDialog</a></li><li><a href="Renderer.Renderer.html">Renderer</a></li><li><a href="StateManager.StateManager.html">StateManager</a></li><li><a href="SystemDialog.SystemDialog.html">SystemDialog</a></li><li><a href="ViewManager.ViewManager.html">ViewManager</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Oct 19 2020 19:25:13 GMT-0500 (Central Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

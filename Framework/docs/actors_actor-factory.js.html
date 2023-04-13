@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: actors/actor-factory.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: actors/actor-factory.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+/** @module actors/actor-factory */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ActorFactory = void 0;
+//#region Imports
+const component_1 = require("../components/component");
+//#endregion
+/**
+ * Creates actors based on the type of actor passed and it's components
+ *
+ * @export
+ * @class ActorFactory
+ * @extends {Component}
+ */
+class ActorFactory extends component_1.Component {
+    /**
+     * Creates an instance of ActorFactory.
+     * @memberof ActorFactory
+     */
+    constructor() {
+        super("ActorFactory", "ActorFactory");
+    }
+}
+exports.ActorFactory = ActorFactory;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYWN0b3ItZmFjdG9yeS5qcyIsInNvdXJjZVJvb3QiOiJHOi9Xb3Jrc3BhY2VzL01HS0VkaXQvLi4vIiwic291cmNlcyI6WyJNR0tGcmFtZXdvcmtKUy9zcmMvYWN0b3JzL2FjdG9yLWZhY3RvcnkudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IjtBQUFBLG1DQUFtQzs7O0FBRW5DLGlCQUFpQjtBQUNqQix1REFBb0Q7QUFDcEQsWUFBWTtBQUVaOzs7Ozs7R0FNRztBQUNILE1BQWEsWUFBYSxTQUFRLHFCQUFTO0lBQ3ZDOzs7T0FHRztJQUNIO1FBQ0ksS0FBSyxDQUFDLGNBQWMsRUFBRSxjQUFjLENBQUMsQ0FBQztJQUMxQyxDQUFDO0NBQ0o7QUFSRCxvQ0FRQyIsInNvdXJjZXNDb250ZW50IjpbIi8qKiBAbW9kdWxlIGFjdG9ycy9hY3Rvci1mYWN0b3J5ICovXHJcblxyXG4vLyNyZWdpb24gSW1wb3J0c1xyXG5pbXBvcnQgeyBDb21wb25lbnQgfSBmcm9tIFwiLi4vY29tcG9uZW50cy9jb21wb25lbnRcIjtcclxuLy8jZW5kcmVnaW9uXHJcblxyXG4vKipcclxuICogQ3JlYXRlcyBhY3RvcnMgYmFzZWQgb24gdGhlIHR5cGUgb2YgYWN0b3IgcGFzc2VkIGFuZCBpdCdzIGNvbXBvbmVudHNcclxuICpcclxuICogQGV4cG9ydFxyXG4gKiBAY2xhc3MgQWN0b3JGYWN0b3J5XHJcbiAqIEBleHRlbmRzIHtDb21wb25lbnR9XHJcbiAqL1xyXG5leHBvcnQgY2xhc3MgQWN0b3JGYWN0b3J5IGV4dGVuZHMgQ29tcG9uZW50IHtcclxuICAgIC8qKlxyXG4gICAgICogQ3JlYXRlcyBhbiBpbnN0YW5jZSBvZiBBY3RvckZhY3RvcnkuXHJcbiAgICAgKiBAbWVtYmVyb2YgQWN0b3JGYWN0b3J5XHJcbiAgICAgKi9cclxuICAgIGNvbnN0cnVjdG9yKCkge1xyXG4gICAgICAgIHN1cGVyKFwiQWN0b3JGYWN0b3J5XCIsIFwiQWN0b3JGYWN0b3J5XCIpO1xyXG4gICAgfVxyXG59Il19</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-actors_actor-factory.html">actors/actor-factory</a></li><li><a href="module-components_component.html">components/component</a></li><li><a href="module-components_component-manager.html">components/component-manager</a></li><li><a href="module-components_types_renderer.html">components/types/renderer</a></li><li><a href="module-game-logic_base-game-logic.html">game-logic/base-game-logic</a></li><li><a href="module-game-logic_game-state-interface.html">game-logic/game-state-interface</a></li><li><a href="module-game-logic_game-state-manager.html">game-logic/game-state-manager</a></li><li><a href="module-game-views_game-view-interface.html">game-views/game-view-interface</a></li><li><a href="module-game-views_game-view-manager.html">game-views/game-view-manager</a></li><li><a href="module-game-views_types_human-view.html">game-views/types/human-view</a></li><li><a href="module-game_game-core.html">game/game-core</a></li><li><a href="module-system_system-dialog.html">system/system-dialog</a></li></ul><h3>Classes</h3><ul><li><a href="ActorFactory.ActorFactory.html">ActorFactory</a></li><li><a href="BaseGameLogic.BaseGameLogic.html">BaseGameLogic</a></li><li><a href="Component.Component.html">Component</a></li><li><a href="ComponentManager.ComponentManager.html">ComponentManager</a></li><li><a href="GameCore.GameCore.html">GameCore</a></li><li><a href="HumanView.HumanView.html">HumanView</a></li><li><a href="module-actors_actor-factory-ActorFactory.html">ActorFactory</a></li><li><a href="module-components_component-manager-ComponentManager.html">ComponentManager</a></li><li><a href="module-components_component-Component.html">Component</a></li><li><a href="module-components_types_renderer-Renderer.html">Renderer</a></li><li><a href="module-game-logic_base-game-logic-BaseGameLogic.html">BaseGameLogic</a></li><li><a href="module-game-logic_game-state-manager-StateManager.html">StateManager</a></li><li><a href="module-game-views_game-view-manager-ViewManager.html">ViewManager</a></li><li><a href="module-game-views_types_human-view-HumanView.html">HumanView</a></li><li><a href="module-game_game-core-GameCore.html">GameCore</a></li><li><a href="module-system_system-dialog-SystemDialog.html">SystemDialog</a></li><li><a href="Renderer.Renderer.html">Renderer</a></li><li><a href="StateManager.StateManager.html">StateManager</a></li><li><a href="SystemDialog.SystemDialog.html">SystemDialog</a></li><li><a href="ViewManager.ViewManager.html">ViewManager</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Oct 19 2020 19:25:13 GMT-0500 (Central Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

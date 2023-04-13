@@ -1,0 +1,29 @@
+{
+  "name": "mgkframeworkjs",
+  "version": "0.0.1",
+  "description": "Game Framework",
+  "scripts": {
+    "postinstall": "electron-builder install-app-deps",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Mausinator08/MGKFrameworkJS.git"
+  },
+  "author": "John Patrick Maus",
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "dependencies": {
+    "@electron/remote": "^2.0.9",
+    "babylonjs": "^5.40.0",
+    "multi-ini": "^2.3.2"
+  },
+  "devDependencies": {
+    "electron": "^22.0.0",
+    "electron-builder": "^23.6.0",
+    "jsdoc": "^4.0.0",
+    "jsdoc-plugin-typescript": "^2.2.0",
+    "typedoc": "^0.23.23",
+    "typescript": "^4.9.4"
+  }
+}

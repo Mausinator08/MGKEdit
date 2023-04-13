@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: game-logic/game-state-interface.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: game-logic/game-state-interface.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+/** @module game-logic/game-state-interface */
+Object.defineProperty(exports, "__esModule", { value: true });
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZ2FtZS1zdGF0ZS1pbnRlcmZhY2UuanMiLCJzb3VyY2VSb290IjoiRzovV29ya3NwYWNlcy9NR0tFZGl0Ly4uLyIsInNvdXJjZXMiOlsiTUdLRnJhbWV3b3JrSlMvc3JjL2dhbWUtbG9naWMvZ2FtZS1zdGF0ZS1pbnRlcmZhY2UudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IjtBQUFBLDhDQUE4QyIsInNvdXJjZXNDb250ZW50IjpbIi8qKiBAbW9kdWxlIGdhbWUtbG9naWMvZ2FtZS1zdGF0ZS1pbnRlcmZhY2UgKi9cclxuXHJcbi8qKlxyXG4gKiBVc2VkIGJ5IGdhbWUtc3RhdGUtbWFuYWdlciB0byBjcmVhdGUgYW5kIHVwZGF0ZSB0aGUgZ2FtZSBzdGF0ZSB0aGF0IGRlcml2ZXMgZnJvbSB0aGlzIGludGVyZmFjZS5cclxuICpcclxuICogQGV4cG9ydFxyXG4gKiBAaW50ZXJmYWNlIElHYW1lU3RhdGVcclxuICovXHJcbmV4cG9ydCBpbnRlcmZhY2UgSUdhbWVTdGF0ZSB7XHJcbiAgICAvLyNyZWdpb24gTWV0aG9kc1xyXG4gICAgLyoqXHJcbiAgICAgKiBDb250cm9sIG1ldGhvZCBmb3IgaW5pdGlhbGl6YXRpb24gb2YgdGhlIHN0YXRlLiAoQ3JlYXRlcyBuZWVkZWQgdmlld3MgZm9yIGdhbWUgbG9naWMpXHJcbiAgICAgKlxyXG4gICAgICogQHJldHVybiB7Kn0gIHtib29sZWFufVxyXG4gICAgICogQG1lbWJlcm9mIElHYW1lU3RhdGVcclxuICAgICAqL1xyXG4gICAgVkluaXQoKTogYm9vbGVhbjtcclxuICAgIC8qKlxyXG4gICAgICogVGhlIG1lYXQgb2YgdGhlIGdhbWUgc3RhdGUuIENvbnRyb2xscyBzcGVjaWZpYyBsb2dpYyBpbiB0aGUgd2F5IHRoZSB2aWV3cyBpbnRlcmFjdCB3aXRoIGVhY2ggb3RoZXIgYW5kIHRoZSBzeXN0ZW0gYXMgYSB3aG9sZS5cclxuICAgICAqXHJcbiAgICAgKiBAbWVtYmVyb2YgSUdhbWVTdGF0ZVxyXG4gICAgICovXHJcbiAgICBWVXBkYXRlKCk6IHZvaWQ7XHJcbiAgICAvKipcclxuICAgICAqIENhbGxlZCB3aGVuIHRoZSBnYW1lIHN0YXRlIGlzIHRvIGJlIHVuaXRpYWxpemVkIG9yIG5vdCB1c2VkIGFueW1vcmUuXHJcbiAgICAgKlxyXG4gICAgICogQG1lbWJlcm9mIElHYW1lU3RhdGVcclxuICAgICAqL1xyXG4gICAgVlNodXRkb3duKCk6IHZvaWQ7XHJcbiAgICAvKipcclxuICAgICAqIFJldHVybnMgdHJ1ZSBpZiBpbml0aWFsaXphdGlvbiB3YXMgc3VjY2Vzc2Z1bGwuXHJcbiAgICAgKlxyXG4gICAgICogQHJldHVybiB7Kn0gIHtib29sZWFufVxyXG4gICAgICogQG1lbWJlcm9mIElHYW1lU3RhdGVcclxuICAgICAqL1xyXG4gICAgVklzSW5pdGlhbGl6ZWQoKTogYm9vbGVhbjtcclxuICAgIC8qKlxyXG4gICAgICogQ2FsbCBWUmVJbml0KCkgaWYgdGhlIHN0YXRlIG9mIHRoZSBnYW1lIGlzIHJlc3RhcnRpbmcuIChOZXh0IG1hdGNoLCBldGMuLi4pXHJcbiAgICAgKlxyXG4gICAgICogQG1lbWJlcm9mIElHYW1lU3RhdGVcclxuICAgICAqL1xyXG4gICAgVlJlSW5pdCgpOiB2b2lkO1xyXG4gICAgLyoqXHJcbiAgICAgKiBSZXR1cm5zIHRydWUgaWYgcmVpbml0aWFsaXppbmcuXHJcbiAgICAgKlxyXG4gICAgICogQHJldHVybiB7Kn0gIHtib29sZWFufVxyXG4gICAgICogQG1lbWJlcm9mIElHYW1lU3RhdGVcclxuICAgICAqL1xyXG4gICAgVklzUmVJbml0KCk6IGJvb2xlYW47XHJcbiAgICAvKipcclxuICAgICAqIFJldHVybnMgdHJ1ZSBpZiBhIHJlcXVlc3QgdG8gdGVybWluYXRlIHRoZSBnYW1lc3RhdGUgb2N1cnJlZC5cclxuICAgICAqXHJcbiAgICAgKiBAcmV0dXJuIHsqfSAge2Jvb2xlYW59XHJcbiAgICAgKiBAbWVtYmVyb2YgSUdhbWVTdGF0ZVxyXG4gICAgICovXHJcbiAgICBWU2h1dGRvd25SZXF1ZXN0ZWQoKTogYm9vbGVhbjtcclxuICAgIC8qKlxyXG4gICAgICogUmVxdWVzdHMgdGhlIHNodXRkb3duLlxyXG4gICAgICpcclxuICAgICAqIEBtZW1iZXJvZiBJR2FtZVN0YXRlXHJcbiAgICAgKi9cclxuICAgIFZSZXF1ZXN0U2h1dGRvd24oKTogdm9pZDtcclxuICAgIC8qKlxyXG4gICAgICogVGhlIGdhbWUgc3RhdGUgaXMgc2FmZSB0byBiZSByZW1vdmVkLiAoSGFzIGJlZW4gc2h1dGRvd24pXHJcbiAgICAgKlxyXG4gICAgICogQHJldHVybiB7Kn0gIHtib29sZWFufVxyXG4gICAgICogQG1lbWJlcm9mIElHYW1lU3RhdGVcclxuICAgICAqL1xyXG4gICAgVkNhbkNsZWFyKCk6IGJvb2xlYW47XHJcbiAgICAvLyNlbmRyZWdpb25cclxuXHJcbiAgICAvLyNyZWdpb24gRmllbGRzXHJcbiAgICAvKipcclxuICAgICAqXHJcbiAgICAgKlxyXG4gICAgICogQHR5cGUge3N0cmluZ31cclxuICAgICAqIEBtZW1iZXJvZiBJR2FtZVN0YXRlXHJcbiAgICAgKi9cclxuICAgIG5hbWU6IHN0cmluZztcclxuICAgIC8qKlxyXG4gICAgICpcclxuICAgICAqXHJcbiAgICAgKiBAdHlwZSB7c3RyaW5nfVxyXG4gICAgICogQG1lbWJlcm9mIElHYW1lU3RhdGVcclxuICAgICAqL1xyXG4gICAgdHlwZTogc3RyaW5nO1xyXG4gICAgLyoqXHJcbiAgICAgKlxyXG4gICAgICpcclxuICAgICAqIEB0eXBlIHtib29sZWFufVxyXG4gICAgICogQG1lbWJlcm9mIElHYW1lU3RhdGVcclxuICAgICAqL1xyXG4gICAgYXV0b1VwZGF0ZTogYm9vbGVhbjtcclxuICAgIC8qKlxyXG4gICAgICpcclxuICAgICAqXHJcbiAgICAgKiBAdHlwZSB7Ym9vbGVhbn1cclxuICAgICAqIEBtZW1iZXJvZiBJR2FtZVN0YXRlXHJcbiAgICAgKi9cclxuICAgIHJlSW5pdDogYm9vbGVhbjtcclxuICAgIC8qKlxyXG4gICAgICpcclxuICAgICAqXHJcbiAgICAgKiBAdHlwZSB7Ym9vbGVhbn1cclxuICAgICAqIEBtZW1iZXJvZiBJR2FtZVN0YXRlXHJcbiAgICAgKi9cclxuICAgIHJlcXVlc3RTaHV0ZG93bjogYm9vbGVhbjtcclxuICAgIC8qKlxyXG4gICAgICpcclxuICAgICAqXHJcbiAgICAgKiBAdHlwZSB7Ym9vbGVhbn1cclxuICAgICAqIEBtZW1iZXJvZiBJR2FtZVN0YXRlXHJcbiAgICAgKi9cclxuICAgIGNhbkNsZWFyOiBib29sZWFuO1xyXG4gICAgLy8jZW5kcmVnaW9uXHJcbn0iXX0=</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-actors_actor-factory.html">actors/actor-factory</a></li><li><a href="module-components_component.html">components/component</a></li><li><a href="module-components_component-manager.html">components/component-manager</a></li><li><a href="module-components_types_renderer.html">components/types/renderer</a></li><li><a href="module-game-logic_base-game-logic.html">game-logic/base-game-logic</a></li><li><a href="module-game-logic_game-state-interface.html">game-logic/game-state-interface</a></li><li><a href="module-game-logic_game-state-manager.html">game-logic/game-state-manager</a></li><li><a href="module-game-views_game-view-interface.html">game-views/game-view-interface</a></li><li><a href="module-game-views_game-view-manager.html">game-views/game-view-manager</a></li><li><a href="module-game-views_types_human-view.html">game-views/types/human-view</a></li><li><a href="module-game_game-core.html">game/game-core</a></li><li><a href="module-system_system-dialog.html">system/system-dialog</a></li></ul><h3>Classes</h3><ul><li><a href="ActorFactory.ActorFactory.html">ActorFactory</a></li><li><a href="BaseGameLogic.BaseGameLogic.html">BaseGameLogic</a></li><li><a href="Component.Component.html">Component</a></li><li><a href="ComponentManager.ComponentManager.html">ComponentManager</a></li><li><a href="GameCore.GameCore.html">GameCore</a></li><li><a href="HumanView.HumanView.html">HumanView</a></li><li><a href="module-actors_actor-factory-ActorFactory.html">ActorFactory</a></li><li><a href="module-components_component-manager-ComponentManager.html">ComponentManager</a></li><li><a href="module-components_component-Component.html">Component</a></li><li><a href="module-components_types_renderer-Renderer.html">Renderer</a></li><li><a href="module-game-logic_base-game-logic-BaseGameLogic.html">BaseGameLogic</a></li><li><a href="module-game-logic_game-state-manager-StateManager.html">StateManager</a></li><li><a href="module-game-views_game-view-manager-ViewManager.html">ViewManager</a></li><li><a href="module-game-views_types_human-view-HumanView.html">HumanView</a></li><li><a href="module-game_game-core-GameCore.html">GameCore</a></li><li><a href="module-system_system-dialog-SystemDialog.html">SystemDialog</a></li><li><a href="Renderer.Renderer.html">Renderer</a></li><li><a href="StateManager.StateManager.html">StateManager</a></li><li><a href="SystemDialog.SystemDialog.html">SystemDialog</a></li><li><a href="ViewManager.ViewManager.html">ViewManager</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Oct 19 2020 19:25:13 GMT-0500 (Central Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

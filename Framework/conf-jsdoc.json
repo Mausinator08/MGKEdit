@@ -1,0 +1,46 @@
+{
+    "plugins": [
+        "plugins/markdown"
+    ],
+    "opts": {
+        "recurse": false,
+        "destination": "G:\\Workspaces\\MGKEdit\\..\\MGKFrameworkJS\\docs"
+    },
+    "recurseDepth": 10,
+    "source": {
+        "include": [
+            "G:\\Workspaces\\MGKEdit\\app\\MGKFrameworkJS\\src\\actors\\actor-factory.js",
+            "G:\\Workspaces\\MGKEdit\\app\\MGKFrameworkJS\\src\\components\\component-manager.js",
+            "G:\\Workspaces\\MGKEdit\\app\\MGKFrameworkJS\\src\\components\\component.js",
+            "G:\\Workspaces\\MGKEdit\\app\\MGKFrameworkJS\\src\\components\\renderer.js",
+            "G:\\Workspaces\\MGKEdit\\app\\MGKFrameworkJS\\src\\components\\types\\renderer.js",
+            "G:\\Workspaces\\MGKEdit\\app\\MGKFrameworkJS\\src\\game\\component-manager.js",
+            "G:\\Workspaces\\MGKEdit\\app\\MGKFrameworkJS\\src\\game\\component.js",
+            "G:\\Workspaces\\MGKEdit\\app\\MGKFrameworkJS\\src\\game\\game-core.js",
+            "G:\\Workspaces\\MGKEdit\\app\\MGKFrameworkJS\\src\\game\\game-view-manager.js",
+            "G:\\Workspaces\\MGKEdit\\app\\MGKFrameworkJS\\src\\game-logic\\base-game-logic.js",
+            "G:\\Workspaces\\MGKEdit\\app\\MGKFrameworkJS\\src\\game-logic\\game-state-interface.js",
+            "G:\\Workspaces\\MGKEdit\\app\\MGKFrameworkJS\\src\\game-logic\\game-state-manager.js",
+            "G:\\Workspaces\\MGKEdit\\app\\MGKFrameworkJS\\src\\game-view-interface.js",
+            "G:\\Workspaces\\MGKEdit\\app\\MGKFrameworkJS\\src\\game-views\\game-view-interface.js",
+            "G:\\Workspaces\\MGKEdit\\app\\MGKFrameworkJS\\src\\game-views\\game-view-manager.js",
+            "G:\\Workspaces\\MGKEdit\\app\\MGKFrameworkJS\\src\\game-views\\human-view.js",
+            "G:\\Workspaces\\MGKEdit\\app\\MGKFrameworkJS\\src\\game-views\\types\\human-view.js",
+            "G:\\Workspaces\\MGKEdit\\app\\MGKFrameworkJS\\src\\system\\system-dialog.js"
+        ],
+        "includePattern": ".+\\.js(doc|x)?$",
+        "excludePattern": "(^|\\/|\\\\)_"
+    },
+    "sourceType": "module",
+    "tags": {
+        "allowUnknownTags": true,
+        "dictionaries": [
+            "jsdoc",
+            "closure"
+        ]
+    },
+    "templates": {
+        "cleverLinks": false,
+        "monospaceLinks": false
+    }
+}

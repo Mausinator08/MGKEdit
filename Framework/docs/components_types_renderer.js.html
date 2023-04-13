@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/types/renderer.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/types/renderer.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+/** @module components/types/renderer */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Create = exports.Renderer = void 0;
+//#region Imports
+const BABYLON = require("babylonjs");
+const component_1 = require("./../component");
+const babylonjs_1 = require("babylonjs");
+const game_core_1 = require("./../../game/game-core");
+//#endregion
+/**
+ * BabylonJS renderer - this needs to be created and initialized after all other dependent components.
+ *
+ * @export
+ * @class Renderer
+ * @extends {Component}
+ */
+class Renderer extends component_1.Component {
+    //#endregion
+    /**
+     * Creates an instance of Renderer.
+     * @param {string} name
+     * @memberof Renderer
+     */
+    constructor(name) {
+        super(name, "renderer");
+        /**
+         * Determines if the game logic and views are running through the BabylonJS Loop or paused.
+         *
+         * @private
+         * @type {boolean}
+         * @memberof Renderer
+         */
+        this.runLoop = false;
+    }
+    //#region Properties
+    /**
+     * Get the main rendering canvas from index.html.
+     *
+     * @type {HTMLCanvasElement}
+     * @memberof Renderer
+     */
+    get Canvas() {
+        return this._canvas;
+    }
+    /**
+     * This sets the html rendering canvas.
+     *
+     * @memberof Renderer
+     */
+    set Canvas(value) {
+        this._canvas = value;
+    }
+    /**
+     * Get the BabylonJS Engine.
+     *
+     * @type {BABYLON.Engine}
+     * @memberof Renderer
+     */
+    get Engine() {
+        return this._engine;
+    }
+    /**
+     * Set the BabylonJS Engine instance.
+     *
+     * @memberof Renderer
+     */
+    set Engine(value) {
+        this._engine = value;
+    }
+    /**
+     * Get the currently rendered scene.
+     *
+     * @type {BABYLON.Scene}
+     * @memberof Renderer
+     */
+    get Scene() {
+        return this._scene;
+    }
+    /**
+     * Set the currently rendered scene.
+     *
+     * @memberof Renderer
+     */
+    set Scene(value) {
+        this._scene = value;
+    }
+    //#endregion
+    //#region Accessors
+    /**
+     * Allows setting the referenced game.
+     *
+     * @param {GameCore} game
+     * @memberof Renderer
+     */
+    SetGameCore(game) {
+        this.gameCore = game;
+    }
+    /**
+     * Modify what is in the scene by passing a callback function to cbModifyScene.
+     *
+     * @param {Function} cbModifyScene
+     * @memberof Renderer
+     */
+    ModifyScene(cbModifyScene) {
+        this._scene = cbModifyScene(this._scene, this._canvas);
+    }
+    //#endregion
+    //#region CRUD Ops
+    /**
+     * Creates a new scene and returns it based on the passed callback function cbLoadScene.
+     *
+     * @param {Function} cbLoadScene
+     * @memberof Renderer
+     */
+    CreateScene(cbLoadScene) {
+        // This creates a basic Babylon Scene object (non-mesh)
+        const scene = new BABYLON.Scene(this._engine);
+        this._scene = scene;
+        this._scene = cbLoadScene(scene, this._canvas);
+    }
+    //#endregion
+    //#region Scene Rendering
+    /**
+     * Clears the screen to the specified color.
+     *
+     * @param {number} r
+     * @param {number} g
+     * @param {number} b
+     * @param {number} a
+     * @memberof Renderer
+     */
+    BeginScene(r, g, b, a) {
+        this._scene.clearColor = new babylonjs_1.Color4(r, g, b, a);
+    }
+    /**
+     * Renders the scene.
+     *
+     * @memberof Renderer
+     */
+    EndScene() {
+        this._scene.render(false);
+    }
+    /**
+     * Starts the game logic and views.
+     *
+     * @memberof Renderer
+     */
+    StartRendering() {
+        this.runLoop = true;
+    }
+    /**
+     * Stops the game logic and views.
+     *
+     * @memberof Renderer
+     */
+    StopRendering() {
+        this._engine.stopRenderLoop();
+    }
+    //#endregion
+    //#region Control Method Overrides
+    /**
+     * Initializes the BabylonJS engine with the current rendering html canvas.
+     *
+     * @return {*}  {boolean}
+     * @memberof Renderer
+     */
+    VInit() {
+        if (BABYLON.Engine.isSupported()) {
+            const engine = new BABYLON.Engine(this._canvas, true);
+            this._engine = engine;
+            window.addEventListener('resize', function () {
+                engine.resize();
+            });
+            this.isInitialized = true;
+            return super.VInit();
+        }
+        else {
+            return false;
+        }
+    }
+    /**
+     * Controls when to run the rendering loop for the game logic and views.
+     *
+     * @memberof Renderer
+     */
+    VUpdate() {
+        if (game_core_1.GameCore.game.Quitting() === true) {
+            this.requestShutdown = true;
+        }
+        if (this.isInitialized) {
+            if (this.runLoop) {
+                this._engine.runRenderLoop(() => {
+                    if (this.gameCore.VInit() === true) {
+                        this.gameCore.VUpdate();
+                    }
+                    this.gameCore.VShutdown();
+                });
+                this.runLoop = false;
+            }
+        }
+        super.VUpdate();
+    }
+    /**
+     * Will release the BabylonJS rendering items and shutdown.
+     *
+     * @memberof Renderer
+     */
+    VShutdown() {
+        super.VShutdown();
+        this.runLoop = false;
+    }
+}
+exports.Renderer = Renderer;
+;
+/**
+ * Renderer component creator
+ *
+ * @export
+ * @param {string} name
+ * @return {*}  {Renderer}
+ */
+function Create(name) {
+    return new Renderer(name);
+}
+exports.Create = Create;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVuZGVyZXIuanMiLCJzb3VyY2VSb290IjoiRzovV29ya3NwYWNlcy9NR0tFZGl0Ly4uLyIsInNvdXJjZXMiOlsiTUdLRnJhbWV3b3JrSlMvc3JjL2NvbXBvbmVudHMvdHlwZXMvcmVuZGVyZXIudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IjtBQUFBLHdDQUF3Qzs7O0FBRXhDLGlCQUFpQjtBQUNqQixxQ0FBcUM7QUFDckMsOENBQTJDO0FBQzNDLHlDQUFtQztBQUNuQyxzREFBa0Q7QUFDbEQsWUFBWTtBQUVaOzs7Ozs7R0FNRztBQUNILE1BQWEsUUFBUyxTQUFRLHFCQUFTO0lBMENuQyxZQUFZO0lBRVo7Ozs7T0FJRztJQUNILFlBQVksSUFBWTtRQUNwQixLQUFLLENBQUMsSUFBSSxFQUFFLFVBQVUsQ0FBQyxDQUFDO1FBaEI1Qjs7Ozs7O1dBTUc7UUFDSyxZQUFPLEdBQVksS0FBSyxDQUFDO0lBVWpDLENBQUM7SUFFRCxvQkFBb0I7SUFDcEI7Ozs7O09BS0c7SUFDSCxJQUFXLE1BQU07UUFDYixPQUFPLElBQUksQ0FBQyxPQUFPLENBQUM7SUFDeEIsQ0FBQztJQUVEOzs7O09BSUc7SUFDSCxJQUFXLE1BQU0sQ0FBQyxLQUF3QjtRQUN0QyxJQUFJLENBQUMsT0FBTyxHQUFHLEtBQUssQ0FBQztJQUN6QixDQUFDO0lBRUQ7Ozs7O09BS0c7SUFDSCxJQUFXLE1BQU07UUFDYixPQUFPLElBQUksQ0FBQyxPQUFPLENBQUM7SUFDeEIsQ0FBQztJQUVEOzs7O09BSUc7SUFDSCxJQUFXLE1BQU0sQ0FBQyxLQUFxQjtRQUNuQyxJQUFJLENBQUMsT0FBTyxHQUFHLEtBQUssQ0FBQztJQUN6QixDQUFDO0lBRUQ7Ozs7O09BS0c7SUFDSCxJQUFXLEtBQUs7UUFDWixPQUFPLElBQUksQ0FBQyxNQUFNLENBQUM7SUFDdkIsQ0FBQztJQUVEOzs7O09BSUc7SUFDSCxJQUFXLEtBQUssQ0FBQyxLQUFvQjtRQUNqQyxJQUFJLENBQUMsTUFBTSxHQUFHLEtBQUssQ0FBQztJQUN4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QyxPQUFPLEVBQUUsQ0FBQztJQUNwQixDQUFDO0lBRUQ7Ozs7T0FJRztJQUNJLFNBQVM7UUFDWixLQUFLLENBQUMsU0FBUyxFQUFFLENBQUM7UUFDbEIsSUFBSSxDQUFDLE9BQU8sR0FBRyxLQUFLLENBQUM7SUFDekIsQ0FBQztDQUVKO0FBMVBELDRCQTBQQztBQUFBLENBQUM7QUFFRjs7Ozs7O0dBTUc7QUFDSCxTQUFnQixNQUFNLENBQUMsSUFBWTtJQUMvQixPQUFPLElBQUksUUFBUSxDQUFDLElBQUksQ0FBQyxDQUFDO0FBQzlCLENBQUM7QUFGRCx3QkFFQyIsInNvdXJjZXNDb250ZW50IjpbIi8qKiBAbW9kdWxlIGNvbXBvbmVudHMvdHlwZXMvcmVuZGVyZXIgKi9cclxuXHJcbi8vI3JlZ2lvbiBJbXBvcnRzXHJcbmltcG9ydCAqIGFzIEJBQllMT04gZnJvbSAnYmFieWxvbmpzJztcclxuaW1wb3J0IHsgQ29tcG9uZW50IH0gZnJvbSAnLi8uLi9jb21wb25lbnQnO1xyXG5pbXBvcnQgeyBDb2xvcjQgfSBmcm9tICdiYWJ5bG9uanMnO1xyXG5pbXBvcnQgeyBHYW1lQ29yZSB9IGZyb20gJy4vLi4vLi4vZ2FtZS9nYW1lLWNvcmUnO1xyXG4vLyNlbmRyZWdpb25cclxuXHJcbi8qKlxyXG4gKiBCYWJ5bG9uSlMgcmVuZGVyZXIgLSB0aGlzIG5lZWRzIHRvIGJlIGNyZWF0ZWQgYW5kIGluaXRpYWxpemVkIGFmdGVyIGFsbCBvdGhlciBkZXBlbmRlbnQgY29tcG9uZW50cy5cclxuICpcclxuICogQGV4cG9ydFxyXG4gKiBAY2xhc3MgUmVuZGVyZXJcclxuICogQGV4dGVuZHMge0NvbXBvbmVudH1cclxuICovXHJcbmV4cG9ydCBjbGFzcyBSZW5kZXJlciBleHRlbmRzIENvbXBvbmVudCB7XHJcbiAgICAvLyNyZWdpb24gRmllbGRzXHJcbiAgICAvKipcclxuICAgICAqIFRoaXMgaXMgdGhlIG1haW4gcmVuZGVyaW5nIGNhbnZhcyBpbiBpbmRleC5odG1sLlxyXG4gICAgICpcclxuICAgICAqIEBwcml2YXRlXHJcbiAgICAgKiBAdHlwZSB7SFRNTENhbnZhc0VsZW1lbnR9XHJcbiAgICAgKiBAbWVtYmVyb2YgUmVuZGVyZXJcclxuICAgICAqL1xyXG4gICAgcHJpdmF0ZSBfY2FudmFzOiBIVE1MQ2FudmFzRWxlbWVudDtcclxuICAgIC8qKlxyXG4gICAgICogVGhlIEJhYnlsb25KUyBHcmFwaGljcy9QaHlzaWNzIEVuZ2luZS5cclxuICAgICAqXHJcbiAgICAgKiBAcHJpdmF0ZVxyXG4gICAgICogQHR5cGUge0JBQllMT04uRW5naW5lfVxyXG4gICAgICogQG1lbWJlcm9mIFJlbmRlcmVyXHJcbiAgICAgKi9cclxuICAgIHByaXZhdGUgX2VuZ2luZTogQkFCWUxPTi5FbmdpbmU7XHJcbiAgICAvKipcclxuICAgICAqIEJhYnlsb25KUyBTY2VuZSBOb2Rlc1xyXG4gICAgICpcclxuICAgICAqIEBwcml2YXRlXHJcbiAgICAgKiBAdHlwZSB7QkFCWUxPTi5TY2VuZX1cclxuICAgICAqIEBtZW1iZXJvZiBSZW5kZXJlclxyXG4gICAgICovXHJcbiAgICBwcml2YXRlIF9zY2VuZTogQkFCWUxPTi5TY2VuZTtcclxuICAgIC8qKlxyXG4gICAgICogQSByZWZlcmVuY2UgdG8gdGhlIEdhbWVDb3JlIGNsYXNzLlxyXG4gICAgICpcclxuICAgICAqIEBwcml2YXRlXHJcbiAgICAgKiBAdHlwZSB7R2FtZUNvcmV9XHJcbiAgICAgKiBAbWVtYmVyb2YgUmVuZGVyZXJcclxuICAgICAqL1xyXG4gICAgcHJpdmF0ZSBnYW1lQ29yZTogR2FtZUNvcmU7XHJcbiAgICAvKipcclxuICAgICAqIERldGVybWluZXMgaWYgdGhlIGdhbWUgbG9naWMgYW5kIHZpZXdzIGFyZSBydW5uaW5nIHRocm91Z2ggdGhlIEJhYnlsb25KUyBMb29wIG9yIHBhdXNlZC5cclxuICAgICAqXHJcbiAgICAgKiBAcHJpdmF0ZVxyXG4gICAgICogQHR5cGUge2Jvb2xlYW59XHJcbiAgICAgKiBAbWVtYmVyb2YgUmVuZGVyZXJcclxuICAgICAqL1xyXG4gICAgcHJpdmF0ZSBydW5Mb29wOiBib29sZWFuID0gZmFsc2U7XHJcbiAgICAvLyNlbmRyZWdpb25cclxuXHJcbiAgICAvKipcclxuICAgICAqIENyZWF0ZXMgYW4gaW5zdGFuY2Ugb2YgUmVuZGVyZXIuXHJcbiAgICAgKiBAcGFyYW0ge3N0cmluZ30gbmFtZVxyXG4gICAgICogQG1lbWJlcm9mIFJlbmRlcmVyXHJcbiAgICAgKi9cclxuICAgIGNvbnN0cnVjdG9yKG5hbWU6IHN0cmluZykge1xyXG4gICAgICAgIHN1cGVyKG5hbWUsIFwicmVuZGVyZXJcIik7XHJcbiAgICB9XHJcblxyXG4gICAgLy8jcmVnaW9uIFByb3BlcnRpZXNcclxuICAgIC8qKlxyXG4gICAgICogR2V0IHRoZSBtYWluIHJlbmRlcmluZyBjYW52YXMgZnJvbSBpbmRleC5odG1sLlxyXG4gICAgICpcclxuICAgICAqIEB0eXBlIHtIVE1MQ2FudmFzRWxlbWVudH1cclxuICAgICAqIEBtZW1iZXJvZiBSZW5kZXJlclxyXG4gICAgICovXHJcbiAgICBwdWJsaWMgZ2V0IENhbnZhcygpOiBIVE1MQ2FudmFzRWxlbWVudCB7XHJcbiAgICAgICAgcmV0dXJuIHRoaXMuX2NhbnZhcztcclxuICAgIH1cclxuXHJcbiAgICAvKipcclxuICAgICAqIFRoaXMgc2V0cyB0aGUgaHRtbCByZW5kZXJpbmcgY2FudmFzLlxyXG4gICAgICpcclxuICAgICAqIEBtZW1iZXJvZiBSZW5kZXJlclxyXG4gICAgICovXHJcbiAgICBwdWJsaWMgc2V0IENhbnZhcyh2YWx1ZTogSFRNTENhbnZhc0VsZW1lbnQpIHtcclxuICAgICAgICB0aGlzLl9jYW52YXMgPSB2YWx1ZTtcclxuICAgIH1cclxuXHJcbiAgICAvKipcclxuICAgICAqIEdldCB0aGUgQmFieWxvbkpTIEVuZ2luZS5cclxuICAgICAqXHJcbiAgICAgKiBAdHlwZSB7QkFCWUxPTi5FbmdpbmV9XHJcbiAgICAgKiBAbWVtYmVyb2YgUmVuZGVyZXJcclxuICAgICAqL1xyXG4gICAgcHVibGljIGdldCBFbmdpbmUoKTogQkFCWUxPTi5FbmdpbmUge1xyXG4gICAgICAgIHJldHVybiB0aGlzLl9lbmdpbmU7XHJcbiAgICB9XHJcblxyXG4gICAgLyoqXHJcbiAgICAgKiBTZXQgdGhlIEJhYnlsb25KUyBFbmdpbmUgaW5zdGFuY2UuXHJcbiAgICAgKlxyXG4gICAgICogQG1lbWJlcm9mIFJlbmRlcmVyXHJcbiAgICAgKi9cclxuICAgIHB1YmxpYyBzZXQgRW5naW5lKHZhbHVlOiBCQUJZTE9OLkVuZ2luZSkge1xyXG4gICAgICAgIHRoaXMuX2VuZ2luZSA9IHZhbHVlO1xyXG4gICAgfVxyXG5cclxuICAgIC8qKlxyXG4gICAgICogR2V0IHRoZSBjdXJyZW50bHkgcmVuZGVyZWQgc2NlbmUuXHJcbiAgICAgKlxyXG4gICAgICogQHR5cGUge0JBQllMT04uU2NlbmV9XHJcbiAgICAgKiBAbWVtYmVyb2YgUmVuZGVyZXJcclxuICAgICAqL1xyXG4gICAgcHVibGljIGdldCBTY2VuZSgpOiBCQUJZTE9OLlNjZW5lIHtcclxuICAgICAgICByZXR1cm4gdGhpcy5fc2NlbmU7XHJcbiAgICB9XHJcblxyXG4gICAgLyoqXHJcbiAgICAgKiBTZXQgdGhlIGN1cnJlbnRseSByZW5kZXJlZCBzY2VuZS5cclxuICAgICAqXHJcbiAgICAgKiBAbWVtYmVyb2YgUmVuZGVyZXJcclxuICAgICAqL1xyXG4gICAgcHVibGljIHNldCBTY2VuZSh2YWx1ZTogQkFCWUxPTi5TY2VuZSkge1xyXG4gICAgICAgIHRoaXMuX3NjZW5lID0gdmFsdWU7XHJcbiAgICB9XHJcbiAgICAvLyNlbmRyZWdpb25cclxuXHJcbiAgICAvLyNyZWdpb24gQWNjZXNzb3JzXHJcbiAgICAvKipcclxuICAgICAqIEFsbG93cyBzZXR0aW5nIHRoZSByZWZlcmVuY2VkIGdhbWUuXHJcbiAgICAgKlxyXG4gICAgICogQHBhcmFtIHtHYW1lQ29yZX0gZ2FtZVxyXG4gICAgICogQG1lbWJlcm9mIFJlbmRlcmVyXHJcbiAgICAgKi9cclxuICAgIHB1YmxpYyBTZXRHYW1lQ29yZShnYW1lOiBHYW1lQ29yZSk6IHZvaWQge1xyXG4gICAgICAgIHRoaXMuZ2FtZUNvcmUgPSBnYW1lO1xyXG4gICAgfVxyXG5cclxuICAgIC8qKlxyXG4gICAgICogTW9kaWZ5IHdoYXQgaXMgaW4gdGhlIHNjZW5lIGJ5IHBhc3NpbmcgYSBjYWxsYmFjayBmdW5jdGlvbiB0byBjYk1vZGlmeVNjZW5lLlxyXG4gICAgICpcclxuICAgICAqIEBwYXJhbSB7RnVuY3Rpb259IGNiTW9kaWZ5U2NlbmVcclxuICAgICAqIEBtZW1iZXJvZiBSZW5kZXJlclxyXG4gICAgICovXHJcbiAgICBwdWJsaWMgTW9kaWZ5U2NlbmUoY2JNb2RpZnlTY2VuZTogRnVuY3Rpb24pOiB2b2lkIHtcclxuICAgICAgICB0aGlzLl9zY2VuZSA9IGNiTW9kaWZ5U2NlbmUodGhpcy5fc2NlbmUsIHRoaXMuX2NhbnZhcyk7XHJcbiAgICB9XHJcbiAgICAvLyNlbmRyZWdpb25cclxuXHJcbiAgICAvLyNyZWdpb24gQ1JVRCBPcHNcclxuICAgIC8qKlxyXG4gICAgICogQ3JlYXRlcyBhIG5ldyBzY2VuZSBhbmQgcmV0dXJucyBpdCBiYXNlZCBvbiB0aGUgcGFzc2VkIGNhbGxiYWNrIGZ1bmN0aW9uIGNiTG9hZFNjZW5lLlxyXG4gICAgICpcclxuICAgICAqIEBwYXJhbSB7RnVuY3Rpb259IGNiTG9hZFNjZW5lXHJcbiAgICAgKiBAbWVtYmVyb2YgUmVuZGVyZXJcclxuICAgICAqL1xyXG4gICAgcHVibGljIENyZWF0ZVNjZW5lKGNiTG9hZFNjZW5lOiBGdW5jdGlvbik6IHZvaWQge1xyXG4gICAgICAgIC8vIFRoaXMgY3JlYXRlcyBhIGJhc2ljIEJhYnlsb24gU2NlbmUgb2JqZWN0IChub24tbWVzaClcclxuICAgICAgICBjb25zdCBzY2VuZSA9IG5ldyBCQUJZTE9OLlNjZW5lKHRoaXMuX2VuZ2luZSk7XHJcbiAgICAgICAgdGhpcy5fc2NlbmUgPSBzY2VuZTtcclxuXHJcbiAgICAgICAgdGhpcy5fc2NlbmUgPSBjYkxvYWRTY2VuZShzY2VuZSwgdGhpcy5fY2FudmFzKTtcclxuICAgIH1cclxuICAgIC8vI2VuZHJlZ2lvblxyXG4gICAgXHJcbiAgICAvLyNyZWdpb24gU2NlbmUgUmVuZGVyaW5nXHJcbiAgICAvKipcclxuICAgICAqIENsZWFycyB0aGUgc2NyZWVuIHRvIHRoZSBzcGVjaWZpZWQgY29sb3IuXHJcbiAgICAgKlxyXG4gICAgICogQHBhcmFtIHtudW1iZXJ9IHJcclxuICAgICAqIEBwYXJhbSB7bnVtYmVyfSBnXHJcbiAgICAgKiBAcGFyYW0ge251bWJlcn0gYlxyXG4gICAgICogQHBhcmFtIHtudW1iZXJ9IGFcclxuICAgICAqIEBtZW1iZXJvZiBSZW5kZXJlclxyXG4gICAgICovXHJcbiAgICBwdWJsaWMgQmVnaW5TY2VuZShyOiBudW1iZXIsIGc6IG51bWJlciwgYjogbnVtYmVyLCBhOiBudW1iZXIpOiB2b2lkIHtcclxuICAgICAgICB0aGlzLl9zY2VuZS5jbGVhckNvbG9yID0gbmV3IENvbG9yNChyLCBnLCBiLCBhKTtcclxuICAgIH1cclxuXHJcbiAgICAvKipcclxuICAgICAqIFJlbmRlcnMgdGhlIHNjZW5lLlxyXG4gICAgICpcclxuICAgICAqIEBtZW1iZXJvZiBSZW5kZXJlclxyXG4gICAgICovXHJcbiAgICBwdWJsaWMgRW5kU2NlbmUoKTogdm9pZCB7XHJcbiAgICAgICAgdGhpcy5fc2NlbmUucmVuZGVyKGZhbHNlKTtcclxuICAgIH1cclxuXHJcbiAgICAvKipcclxuICAgICAqIFN0YXJ0cyB0aGUgZ2FtZSBsb2dpYyBhbmQgdmlld3MuXHJcbiAgICAgKlxyXG4gICAgICogQG1lbWJlcm9mIFJlbmRlcmVyXHJcbiAgICAgKi9cclxuICAgIHB1YmxpYyBTdGFydFJlbmRlcmluZygpOiB2b2lkIHtcclxuICAgICAgICB0aGlzLnJ1bkxvb3AgPSB0cnVlO1xyXG4gICAgfVxyXG5cclxuICAgIC8qKlxyXG4gICAgICogU3RvcHMgdGhlIGdhbWUgbG9naWMgYW5kIHZpZXdzLlxyXG4gICAgICpcclxuICAgICAqIEBtZW1iZXJvZiBSZW5kZXJlclxyXG4gICAgICovXHJcbiAgICBwdWJsaWMgU3RvcFJlbmRlcmluZygpOiB2b2lkIHtcclxuICAgICAgICB0aGlzLl9lbmdpbmUuc3RvcFJlbmRlckxvb3AoKTtcclxuICAgIH1cclxuICAgIC8vI2VuZHJlZ2lvblxyXG5cclxuICAgIC8vI3JlZ2lvbiBDb250cm9sIE1ldGhvZCBPdmVycmlkZXNcclxuICAgIC8qKlxyXG4gICAgICogSW5pdGlhbGl6ZXMgdGhlIEJhYnlsb25KUyBlbmdpbmUgd2l0aCB0aGUgY3VycmVudCByZW5kZXJpbmcgaHRtbCBjYW52YXMuXHJcbiAgICAgKlxyXG4gICAgICogQHJldHVybiB7Kn0gIHtib29sZWFufVxyXG4gICAgICogQG1lbWJlcm9mIFJlbmRlcmVyXHJcbiAgICAgKi9cclxuICAgIHB1YmxpYyBWSW5pdCgpOiBib29sZWFuIHtcclxuICAgICAgICBpZiAoQkFCWUxPTi5FbmdpbmUuaXNTdXBwb3J0ZWQoKSkge1xyXG4gICAgICAgICAgICBjb25zdCBlbmdpbmUgPSBuZXcgQkFCWUxPTi5FbmdpbmUodGhpcy5fY2FudmFzLCB0cnVlKTtcclxuICAgICAgICAgICAgdGhpcy5fZW5naW5lID0gZW5naW5lO1xyXG5cclxuICAgICAgICAgICAgd2luZG93LmFkZEV2ZW50TGlzdGVuZXIoJ3Jlc2l6ZScsIGZ1bmN0aW9uICgpIHtcclxuICAgICAgICAgICAgICAgIGVuZ2luZS5yZXNpemUoKTtcclxuICAgICAgICAgICAgfSk7XHJcblxyXG4gICAgICAgICAgICB0aGlzLmlzSW5pdGlhbGl6ZWQgPSB0cnVlO1xyXG4gICAgICAgICAgICByZXR1cm4gc3VwZXIuVkluaXQoKTtcclxuICAgICAgICB9IGVsc2Uge1xyXG4gICAgICAgICAgICByZXR1cm4gZmFsc2U7XHJcbiAgICAgICAgfVxyXG4gICAgfVxyXG5cclxuICAgIC8qKlxyXG4gICAgICogQ29udHJvbHMgd2hlbiB0byBydW4gdGhlIHJlbmRlcmluZyBsb29wIGZvciB0aGUgZ2FtZSBsb2dpYyBhbmQgdmlld3MuXHJcbiAgICAgKlxyXG4gICAgICogQG1lbWJlcm9mIFJlbmRlcmVyXHJcbiAgICAgKi9cclxuICAgIHB1YmxpYyBWVXBkYXRlKCk6IHZvaWQge1xyXG4gICAgICAgIGlmIChHYW1lQ29yZS5nYW1lLlF1aXR0aW5nKCkgPT09IHRydWUpIHtcclxuICAgICAgICAgICAgdGhpcy5yZXF1ZXN0U2h1dGRvd24gPSB0cnVlO1xyXG4gICAgICAgIH1cclxuXHJcbiAgICAgICAgaWYgKHRoaXMuaXNJbml0aWFsaXplZCkge1xyXG4gICAgICAgICAgICBpZiAodGhpcy5ydW5Mb29wKSB7XHJcbiAgICAgICAgICAgICAgICB0aGlzLl9lbmdpbmUucnVuUmVuZGVyTG9vcCgoKSA9PiB7XHJcbiAgICAgICAgICAgICAgICAgICAgaWYgKHRoaXMuZ2FtZUNvcmUuVkluaXQoKSA9PT0gdHJ1ZSkge1xyXG4gICAgICAgICAgICAgICAgICAgICAgICB0aGlzLmdhbWVDb3JlLlZVcGRhdGUoKTtcclxuICAgICAgICAgICAgICAgICAgICB9XHJcblxyXG4gICAgICAgICAgICAgICAgICAgIHRoaXMuZ2FtZUNvcmUuVlNodXRkb3duKCk7XHJcbiAgICAgICAgICAgICAgICB9KTtcclxuICAgICAgICAgICAgICAgIHRoaXMucnVuTG9vcCA9IGZhbHNlO1xyXG4gICAgICAgICAgICB9XHJcbiAgICAgICAgfVxyXG4gICAgICAgIHN1cGVyLlZVcGRhdGUoKTtcclxuICAgIH1cclxuXHJcbiAgICAvKipcclxuICAgICAqIFdpbGwgcmVsZWFzZSB0aGUgQmFieWxvbkpTIHJlbmRlcmluZyBpdGVtcyBhbmQgc2h1dGRvd24uXHJcbiAgICAgKlxyXG4gICAgICogQG1lbWJlcm9mIFJlbmRlcmVyXHJcbiAgICAgKi9cclxuICAgIHB1YmxpYyBWU2h1dGRvd24oKTogdm9pZCB7XHJcbiAgICAgICAgc3VwZXIuVlNodXRkb3duKCk7XHJcbiAgICAgICAgdGhpcy5ydW5Mb29wID0gZmFsc2U7XHJcbiAgICB9XHJcbiAgICAvLyNlbmRyZWdpb25cclxufTtcclxuXHJcbi8qKlxyXG4gKiBSZW5kZXJlciBjb21wb25lbnQgY3JlYXRvclxyXG4gKlxyXG4gKiBAZXhwb3J0XHJcbiAqIEBwYXJhbSB7c3RyaW5nfSBuYW1lXHJcbiAqIEByZXR1cm4geyp9ICB7UmVuZGVyZXJ9XHJcbiAqL1xyXG5leHBvcnQgZnVuY3Rpb24gQ3JlYXRlKG5hbWU6IHN0cmluZyk6IFJlbmRlcmVyIHtcclxuICAgIHJldHVybiBuZXcgUmVuZGVyZXIobmFtZSk7XHJcbn1cclxuIl19</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-actors_actor-factory.html">actors/actor-factory</a></li><li><a href="module-components_component.html">components/component</a></li><li><a href="module-components_component-manager.html">components/component-manager</a></li><li><a href="module-components_types_renderer.html">components/types/renderer</a></li><li><a href="module-game-logic_base-game-logic.html">game-logic/base-game-logic</a></li><li><a href="module-game-logic_game-state-interface.html">game-logic/game-state-interface</a></li><li><a href="module-game-logic_game-state-manager.html">game-logic/game-state-manager</a></li><li><a href="module-game-views_game-view-interface.html">game-views/game-view-interface</a></li><li><a href="module-game-views_game-view-manager.html">game-views/game-view-manager</a></li><li><a href="module-game-views_types_human-view.html">game-views/types/human-view</a></li><li><a href="module-game_game-core.html">game/game-core</a></li><li><a href="module-system_system-dialog.html">system/system-dialog</a></li></ul><h3>Classes</h3><ul><li><a href="ActorFactory.ActorFactory.html">ActorFactory</a></li><li><a href="BaseGameLogic.BaseGameLogic.html">BaseGameLogic</a></li><li><a href="Component.Component.html">Component</a></li><li><a href="ComponentManager.ComponentManager.html">ComponentManager</a></li><li><a href="GameCore.GameCore.html">GameCore</a></li><li><a href="HumanView.HumanView.html">HumanView</a></li><li><a href="module-actors_actor-factory-ActorFactory.html">ActorFactory</a></li><li><a href="module-components_component-manager-ComponentManager.html">ComponentManager</a></li><li><a href="module-components_component-Component.html">Component</a></li><li><a href="module-components_types_renderer-Renderer.html">Renderer</a></li><li><a href="module-game-logic_base-game-logic-BaseGameLogic.html">BaseGameLogic</a></li><li><a href="module-game-logic_game-state-manager-StateManager.html">StateManager</a></li><li><a href="module-game-views_game-view-manager-ViewManager.html">ViewManager</a></li><li><a href="module-game-views_types_human-view-HumanView.html">HumanView</a></li><li><a href="module-game_game-core-GameCore.html">GameCore</a></li><li><a href="module-system_system-dialog-SystemDialog.html">SystemDialog</a></li><li><a href="Renderer.Renderer.html">Renderer</a></li><li><a href="StateManager.StateManager.html">StateManager</a></li><li><a href="SystemDialog.SystemDialog.html">SystemDialog</a></li><li><a href="ViewManager.ViewManager.html">ViewManager</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Oct 19 2020 19:25:13 GMT-0500 (Central Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

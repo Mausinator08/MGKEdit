@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/component-manager.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/component-manager.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+/** @module components/component-manager */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ComponentManager = void 0;
+//#endregion
+/**
+ * Maneges components at the system level such as for rendering.
+ *
+ * @export
+ * @class ComponentManager
+ */
+class ComponentManager {
+    //#endregion
+    /**
+     * Creates an instance of ComponentManager.
+     * @param {string} comPath
+     * @memberof ComponentManager
+     */
+    constructor(comPath) {
+        this.components = new Map();
+        this.comDir = comPath;
+    }
+    //#endregion
+    //#region Properties    
+    /**
+     * Returns the number of components in the component list.
+     *
+     * @readonly
+     * @memberof ComponentManager
+     */
+    get count() {
+        return this.components.size;
+    }
+    //#region Accessors
+    /**
+     * Get one component by name.
+     *
+     * @template T
+     * @param {string} name
+     * @return {*}  {(T | null)}
+     * @memberof ComponentManager
+     */
+    GetByName(name) {
+        try {
+            if (!this.components.has(name)) {
+                console.error("ComponentManager: GetByName() -> Could not get component [" + name + "]! A component with that name does not exist.");
+                return null;
+            }
+            return this.components.get(name);
+        }
+        catch (err) {
+            console.error("ComponentManager: GetByName() -> Could not get component [" + name + "]!\n" +
+                "### ERROR:\n" + err);
+            return null;
+        }
+    }
+    /**
+     * Get one or more components by type.
+     *
+     * @template T
+     * @param {string} type
+     * @return {*}  {(T[] | null)}
+     * @memberof ComponentManager
+     */
+    GetArrayByType(type) {
+        try {
+            let coms = new Array();
+            this.components.forEach(com => {
+                coms.push(com);
+            });
+            return coms;
+        }
+        catch (err) {
+            console.error("ComponentManager: GetArrayByType() -> Could not get any components of type &lt;" + type + ">!\n" +
+                "### ERROR:\n" + err);
+            return null;
+        }
+    }
+    //#endregion
+    //#region CRUD Ops
+    /**
+     * Create a new empty component of a certain type.
+     *
+     * @param {string} name
+     * @param {string} type
+     * @return {*}  {string}
+     * @memberof ComponentManager
+     */
+    Create(name, type) {
+        try {
+            if (this.components.has(name)) {
+                console.error("ComponentManager: Create() -> Could not create component [" + name + "] of type &lt;" + this.components.get(name).VGetType() + ">!\n" +
+                    "A component with that name already exists. Expected type was &lt;" + type + ">.");
+                return JSON.stringify({ comName: name, code: "exists" });
+            }
+            let com;
+            try {
+                com = require(this.comDir + "/" + type + ".js");
+            }
+            catch (err) {
+                try {
+                    com = require(__dirname + "/../components/" + type + ".js");
+                }
+                catch (err2) {
+                    console.error("{\n" +
+                        "    {\n" +
+                        "        ### ERROR 1:\n" +
+                        "        " + err + "\n" +
+                        "        ### ERROR 2:\n" +
+                        "        " + err2 + "\n" +
+                        "    }\n" +
+                        "}");
+                }
+            }
+            this.components.set(name, com.Create(name));
+            return JSON.stringify({ comName: name, code: "created" });
+        }
+        catch (err) {
+            console.error("ComponentManager: Create() -> Could not create component [" + name + "] of type &lt;" + type + ">!\n" +
+                "Ensure you did not mistype the string for the &lt;type> parameter. Also make sure the component type being referenced \n" +
+                "exists under './components/*.ts' and not in a different folder as well as not in a subfolder.\n" +
+                "### ERROR:\n" + err);
+            return JSON.stringify({ comName: name, code: "error" });
+        }
+    }
+    /**
+     * Add an externally created component.
+     *
+     * @param {Component} component
+     * @return {*}  {boolean}
+     * @memberof ComponentManager
+     */
+    Add(component) {
+        try {
+            if (this.components.has(component.VGetName())) {
+                console.error("ComponentManager: Add() -> Could not add component [" + component.VGetName() + "] of type &lt;" + component.VGetType() + ">!\n" +
+                    "A component with that name already exists.");
+                return false;
+            }
+            this.components.set(component.VGetName(), component);
+            return true;
+        }
+        catch (err) {
+            console.error("ComponentManager: Add() -> Could not add component [" + component.VGetName() + "] of type &lt;" + component.VGetType() + ">!\n" +
+                "### ERROR:\n" + err);
+            return false;
+        }
+    }
+    /**
+     * Remove a component by name.
+     *
+     * @param {string} name
+     * @return {*}  {boolean}
+     * @memberof ComponentManager
+     */
+    Remove(name) {
+        try {
+            if (!this.components.has(name)) {
+                console.error("ComponentManager: Remove() -> Could not remove component [" + name + "]!\n" +
+                    "A component with that name does not exist.");
+                return false;
+            }
+            return this.components.delete(name);
+        }
+        catch (err) {
+            console.error("ComponentManager: Remove() -> Could not remove component [" + name + "]!\n" +
+                "### ERROR:\n" + err);
+            return false;
+        }
+    }
+    /**
+     * Clear all components.
+     * Be careful with this. Make sure all components have been properly shutdown.
+     *
+     * @return {*}  {void}
+     * @memberof ComponentManager
+     */
+    Clear() {
+        if (this.components.size > 0) {
+            this.components.clear();
+            return;
+        }
+        console.warn("ComponentManager: Remove() -> No components to clear! I'm empty!");
+    }
+    //#endregion
+    //#region Control Methods
+    /**
+     * Initialize all components that have not been initialized or need to be reinitialized
+     *
+     * @memberof ComponentManager
+     */
+    Init() {
+        if (this.components.size > 0) {
+            this.components.forEach(com => {
+                if (com.ReInit === true) {
+                    if (!com.VInit()) {
+                        console.error("ComponentManager: Init() -> could not initialize component [" + com.VGetName() + "] of type &lt;" + com.VGetType() + ">!");
+                    }
+                }
+            });
+        }
+    }
+    /**
+     * Update all initialized components.
+     *
+     * @memberof ComponentManager
+     */
+    Update() {
+        if (this.components.size > 0) {
+            this.components.forEach(com => {
+                try {
+                    if (com.IsInitialized) {
+                        com.VUpdate();
+                    }
+                }
+                catch (err) {
+                    console.error("ComponentManager: Update() -> could not update component [" + com.VGetName() + "] of type &lt;" + com.VGetType() + ">!\n" +
+                        "### ERROR:\n" + err);
+                }
+            });
+        }
+    }
+    /**
+     * Shutdown components marked for termination.
+     *
+     * @memberof ComponentManager
+     */
+    Shutdown() {
+        if (this.components.size > 0) {
+            this.components.forEach(com => {
+                try {
+                    if (com.ShutdownRequested() === true) {
+                        com.VShutdown();
+                    }
+                }
+                catch (err) {
+                    console.error("ComponentManager: Shutdown() -> could not shutdown component [" + com.VGetName() + "] of type &lt;" + com.VGetType() + ">!\n" +
+                        "### ERROR:\n" + err);
+                }
+            });
+        }
+    }
+}
+exports.ComponentManager = ComponentManager;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY29tcG9uZW50LW1hbmFnZXIuanMiLCJzb3VyY2VSb290IjoiRzovV29ya3NwYWNlcy9NR0tFZGl0Ly4uLyIsInNvdXJjZXMiOlsiTUdLRnJhbWV3b3JrSlMvc3JjL2NvbXBvbmVudHMvY29tcG9uZW50LW1hbmFnZXIudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IjtBQUFBLDJDQUEyQzs7O0FBSTNDLFlBQVk7QUFFWjs7Ozs7R0FLRztBQUNILE1BQWEsZ0JBQWdCO0lBNkJ6QixZQUFZO0lBRVo7Ozs7T0FJRztJQUNILFlBQVksT0FBZTtRQUN2QixJQUFJLENBQUMsVUFBVSxHQUFHLElBQUksR0FBRyxFQUFxQixDQUFDO1FBQy9DLElBQUksQ0FBQyxNQUFNLEdBQUcsT0FBTyxDQUFDO0lBQzFCLENBQUM7SUF0QkQsWUFBWTtJQUVaLHdCQUF3QjtJQUN4Qjs7Ozs7T0FLRztJQUNILElBQVcsS0FBSztRQUNaLE9BQU8sSUFBSSxDQUFDLFVBQVUsQ0FBQyxJQUFJLENBQUM7SUFDaEMsQ0FBQztJQWFELG1CQUFtQjtJQUNuQjs7Ozs7OztPQU9HO0lBQ0ksU0FBUyxDQUFJLElBQVk7UUFDNUIsSUFBSTtZQUNBLElBQUksQ0FBQyxJQUFJLENBQUMsVUFBVSxDQUFDLEdBQUcsQ0FBQyxJQUFJLENBQUMsRUFBRTtnQkFDNUIsT0FBTyxDQUFDLEtBQUssQ0FBQyw0REFBNEQsR0FBRyxJQUFJLEdBQUcsK0NBQStDLENBQUMsQ0FBQztnQkFDckksT0FBTyxJQUFJLENBQUM7YUFDZjtZQUVELE9BQU8sSUFBSSxDQUFDLFVBQVUsQ0FBQyxHQUFHLENBQUMsSUFBSSxDQUFpQixDQUFDO1NBQ3BEO1FBQUMsT0FBTyxHQUFHLEVBQUU7WUFDVixPQUFPLENBQUMsS0FBSyxDQUFDLDREQUE0RCxHQUFHLElBQUksR0FBRyxNQUFNO2dCQUMxRixjQUFjLEdBQUcsR0FBRyxDQUFDLENBQUM7WUFDdEIsT0FBTyxJQUFJLENBQUM7U0FDZjtJQUNMLENBQUM7SUFFRDs7Ozs7OztPQU9HO0lB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LElBQUksQ0FBQyxVQUFVLENBQUMsSUFBSSxHQUFHLENBQUMsRUFBRTtZQUMxQixJQUFJLENBQUMsVUFBVSxDQUFDLE9BQU8sQ0FBQyxHQUFHLENBQUMsRUFBRTtnQkFDMUIsSUFBSTtvQkFDQSxJQUFJLEdBQUcsQ0FBQyxpQkFBaUIsRUFBRSxLQUFLLElBQUksRUFBRTt3QkFDbEMsR0FBRyxDQUFDLFNBQVMsRUFBRSxDQUFDO3FCQUNuQjtpQkFDSjtnQkFBQyxPQUFPLEdBQUcsRUFBRTtvQkFDVixPQUFPLENBQUMsS0FBSyxDQUFDLGdFQUFnRSxHQUFHLEdBQUcsQ0FBQyxRQUFRLEVBQUUsR0FBRyxhQUFhLEdBQUcsR0FBRyxDQUFDLFFBQVEsRUFBRSxHQUFHLE1BQU07d0JBQ3pJLGNBQWMsR0FBRyxHQUFHLENBQUMsQ0FBQztpQkFDekI7WUFDTCxDQUFDLENBQUMsQ0FBQztTQUNOO0lBQ0wsQ0FBQztDQUVKO0FBcFFELDRDQW9RQyIsInNvdXJjZXNDb250ZW50IjpbIi8qKiBAbW9kdWxlIGNvbXBvbmVudHMvY29tcG9uZW50LW1hbmFnZXIgKi9cclxuXHJcbi8vI3JlZ2lvbiBJbXBvcnRzXHJcbmltcG9ydCB7IENvbXBvbmVudCB9IGZyb20gXCIuL2NvbXBvbmVudFwiO1xyXG4vLyNlbmRyZWdpb25cclxuXHJcbi8qKlxyXG4gKiBNYW5lZ2VzIGNvbXBvbmVudHMgYXQgdGhlIHN5c3RlbSBsZXZlbCBzdWNoIGFzIGZvciByZW5kZXJpbmcuXHJcbiAqXHJcbiAqIEBleHBvcnRcclxuICogQGNsYXNzIENvbXBvbmVudE1hbmFnZXJcclxuICovXHJcbmV4cG9ydCBjbGFzcyBDb21wb25lbnRNYW5hZ2VyIHtcclxuICAgIC8vI3JlZ2lvbiBmaWVsZHNcclxuICAgIC8qKlxyXG4gICAgICogS2V5L1ZhbHVlIHBhaXJzIGxpc3Qgb2YgY29tcG9uZW50cy5cclxuICAgICAqXHJcbiAgICAgKiBAcHJpdmF0ZVxyXG4gICAgICogQHR5cGUge01hcDxzdHJpbmcsIENvbXBvbmVudD59XHJcbiAgICAgKiBAbWVtYmVyb2YgQ29tcG9uZW50TWFuYWdlclxyXG4gICAgICovXHJcbiAgICBwcml2YXRlIGNvbXBvbmVudHM6IE1hcDxzdHJpbmcsIENvbXBvbmVudD47XHJcbiAgICAvKipcclxuICAgICAqIFBvaW50cyB0byB0aGUgZXh0ZXJuYWwgZ2FtZSdzIGNvbXBvbmVudCBkaXJlY3RvcnkuXHJcbiAgICAgKlxyXG4gICAgICogQHR5cGUge3N0cmluZ31cclxuICAgICAqIEBtZW1iZXJvZiBDb21wb25lbnRNYW5hZ2VyXHJcbiAgICAgKi9cclxuICAgIHB1YmxpYyBjb21EaXI6IHN0cmluZztcclxuICAgIC8vI2VuZHJlZ2lvblxyXG4gICAgXHJcbiAgICAvLyNyZWdpb24gUHJvcGVydGllcyAgICBcclxuICAgIC8qKlxyXG4gICAgICogUmV0dXJucyB0aGUgbnVtYmVyIG9mIGNvbXBvbmVudHMgaW4gdGhlIGNvbXBvbmVudCBsaXN0LlxyXG4gICAgICpcclxuICAgICAqIEByZWFkb25seVxyXG4gICAgICogQG1lbWJlcm9mIENvbXBvbmVudE1hbmFnZXJcclxuICAgICAqL1xyXG4gICAgcHVibGljIGdldCBjb3VudCgpIHtcclxuICAgICAgICByZXR1cm4gdGhpcy5jb21wb25lbnRzLnNpemU7XHJcbiAgICB9XHJcbiAgICAvLyNlbmRyZWdpb25cclxuXHJcbiAgICAvKipcclxuICAgICAqIENyZWF0ZXMgYW4gaW5zdGFuY2Ugb2YgQ29tcG9uZW50TWFuYWdlci5cclxuICAgICAqIEBwYXJhbSB7c3RyaW5nfSBjb21QYXRoXHJcbiAgICAgKiBAbWVtYmVyb2YgQ29tcG9uZW50TWFuYWdlclxyXG4gICAgICovXHJcbiAgICBjb25zdHJ1Y3Rvcihjb21QYXRoOiBzdHJpbmcpIHtcclxuICAgICAgICB0aGlzLmNvbXBvbmVudHMgPSBuZXcgTWFwPHN0cmluZywgQ29tcG9uZW50PigpO1xyXG4gICAgICAgIHRoaXMuY29tRGlyID0gY29tUGF0aDtcclxuICAgIH1cclxuXHJcbiAgICAvLyNyZWdpb24gQWNjZXNzb3JzXHJcbiAgICAvKipcclxuICAgICAqIEdldCBvbmUgY29tcG9uZW50IGJ5IG5hbWUuXHJcbiAgICAgKlxyXG4gICAgICogQHRlbXBsYXRlIFRcclxuICAgICAqIEBwYXJhbSB7c3RyaW5nfSBuYW1lXHJcbiAgICAgKiBAcmV0dXJuIHsqfSAgeyhUIHwgbnVsbCl9XHJcbiAgICAgKiBAbWVtYmVyb2YgQ29tcG9uZW50TWFuYWdlclxyXG4gICAgICovXHJcbiAgICBwdWJsaWMgR2V0QnlOYW1lPFQ+KG5hbWU6IHN0cmluZyk6IFQgfCBudWxsIHtcclxuICAgICAgICB0cnkge1xyXG4gICAgICAgICAgICBpZiAoIXRoaXMuY29tcG9uZW50cy5oYXMobmFtZSkpIHtcclxuICAgICAgICAgICAgICAgIGNvbnNvbGUuZXJyb3IoXCJDb21wb25lbnRNYW5hZ2VyOiBHZXRCeU5hbWUoKSAtPiBDb3VsZCBub3QgZ2V0IGNvbXBvbmVudCBbXCIgKyBuYW1lICsgXCJdISBBIGNvbXBvbmVudCB3aXRoIHRoYXQgbmFtZSBkb2VzIG5vdCBleGlzdC5cIik7XHJcbiAgICAgICAgICAgICAgICByZXR1cm4gbnVsbDtcclxuICAgICAgICAgICAgfVxyXG5cclxuICAgICAgICAgICAgcmV0dXJuIHRoaXMuY29tcG9uZW50cy5nZXQobmFtZSkgYXMgdW5rbm93biBhcyBUO1xyXG4gICAgICAgIH0gY2F0Y2ggKGVycikge1xyXG4gICAgICAgICAgICBjb25zb2xlLmVycm9yKFwiQ29tcG9uZW50TWFuYWdlcjogR2V0QnlOYW1lKCkgLT4gQ291bGQgbm90IGdldCBjb21wb25lbnQgW1wiICsgbmFtZSArIFwiXSFcXG5cIiArIFxyXG4gICAgICAgICAgICBcIiMjIyBFUlJPUjpcXG5cIiArIGVycik7XHJcbiAgICAgICAgICAgIHJldHVybiBudWxsO1xyXG4gICAgICAgIH1cclxuICAgIH1cclxuXHJcbiAgICAvKipcclxuICAgICAqIEdldCBvbmUgb3IgbW9yZSBjb21wb25lbnRzIGJ5IHR5cGUuXHJcbiAgICAgKlxyXG4gICAgICogQHRlbXBsYXRlIFRcclxuICAgICAqIEBwYXJhbSB7c3RyaW5nfSB0eXBlXHJcbiAgICAgKiBAcmV0dXJuIHsqfSAgeyhUW10gfCBudWxsKX1cclxuICAgICAqIEBtZW1iZXJvZiBDb21wb25lbnRNYW5hZ2VyXHJcbiAgICAgKi9cclxuICAgIHB1YmxpYyBHZXRBcnJheUJ5VHlwZTxUPih0eXBlOiBzdHJpbmcpOiBUW10gfCBudWxsIHtcclxuICAgICAgICB0cnkge1xyXG4gICAgICAgICAgICBsZXQgY29tczogVFtdID0gbmV3IEFycmF5PFQ+KCk7XHJcbiAgICAgICAgICAgIHRoaXMuY29tcG9uZW50cy5mb3JFYWNoKGNvbSA9PiB7XHJcbiAgICAgICAgICAgICAgICBjb21zLnB1c2goY29tIGFzIHVua25vd24gYXMgVCk7XHJcbiAgICAgICAgICAgIH0pO1xyXG5cclxuICAgICAgICAgICAgcmV0dXJuIGNvbXM7XHJcbiAgICAgICAgfSBjYXRjaCAoZXJyKSB7XHJcbiAgICAgICAgICAgIGNvbnNvbGUuZXJyb3IoXCJDb21wb25lbnRNYW5hZ2VyOiBHZXRBcnJheUJ5VHlwZSgpIC0+IENvdWxkIG5vdCBnZXQgYW55IGNvbXBvbmVudHMgb2YgdHlwZSA8XCIgKyB0eXBlICsgXCI+IVxcblwiICsgXHJcbiAgICAgICAgICAgIFwiIyMjIEVSUk9SOlxcblwiICsgZXJyKTtcclxuICAgICAgICAgICAgcmV0dXJuIG51bGw7XHJcbiAgICAgICAgfVxyXG4gICAgfVxyXG4gICAgLy8jZW5kcmVnaW9uXHJcblxyXG4gICAgLy8jcmVnaW9uIENSVUQgT3BzXHJcbiAgICAvKipcclxuICAgICAqIENyZWF0ZSBhIG5ldyBlbXB0eSBjb21wb25lbnQgb2YgYSBjZXJ0YWluIHR5cGUuXHJcbiAgICAgKlxyXG4gICAgICogQHBhcmFtIHtzdHJpbmd9IG5hbWVcclxuICAgICAqIEBwYXJhbSB7c3RyaW5nfSB0eXBlXHJcbiAgICAgKiBAcmV0dXJuIHsqfSAge3N0cmluZ31cclxuICAgICAqIEBtZW1iZXJvZiBDb21wb25lbnRNYW5hZ2VyXHJcbiAgICAgKi9cclxuICAgIHB1YmxpYyBDcmVhdGUobmFtZTogc3RyaW5nLCB0eXBlOiBzdHJpbmcpOiBzdHJpbmcge1xyXG4gICAgICAgIHRyeSB7XHJcbiAgICAgICAgICAgIGlmICh0aGlzLmNvbXBvbmVudHMuaGFzKG5hbWUpKSB7XHJcbiAgICAgICAgICAgICAgICBjb25zb2xlLmVycm9yKFwiQ29tcG9uZW50TWFuYWdlcjogQ3JlYXRlKCkgLT4gQ291bGQgbm90IGNyZWF0ZSBjb21wb25lbnQgW1wiICsgbmFtZSArIFwiXSBvZiB0eXBlIDxcIiArIHRoaXMuY29tcG9uZW50cy5nZXQobmFtZSkuVkdldFR5cGUoKSArIFwiPiFcXG5cIiArIFxyXG4gICAgICAgICAgICAgICAgXCJBIGNvbXBvbmVudCB3aXRoIHRoYXQgbmFtZSBhbHJlYWR5IGV4aXN0cy4gRXhwZWN0ZWQgdHlwZSB3YXMgPFwiICsgdHlwZSArIFwiPi5cIik7XHJcbiAgICAgICAgICAgICAgICByZXR1cm4gSlNPTi5zdHJpbmdpZnkoeyBjb21OYW1lOiBuYW1lLCBjb2RlOiBcImV4aXN0c1wiIH0pO1xyXG4gICAgICAgICAgICB9XHJcblxyXG4gICAgICAgICAgICBsZXQgY29tOiBhbnk7XHJcblxyXG4gICAgICAgICAgICB0cnkge1xyXG4gICAgICAgICAgICAgICAgY29tID0gcmVxdWlyZSh0aGlzLmNvbURpciArIFwiL1wiICsgdHlwZSArIFwiLmpzXCIpO1xyXG4gICAgICAgICAgICB9IGNhdGNoIChlcnIpIHtcclxuICAgICAgICAgICAgICAgIHRyeSB7XHJcbiAgICAgICAgICAgICAgICAgICAgY29tID0gcmVxdWlyZShfX2Rpcm5hbWUgKyBcIi8uLi9jb21wb25lbnRzL1wiICsgdHlwZSArIFwiLmpzXCIpO1xyXG4gICAgICAgICAgICAgICAgfSBjYXRjaCAoZXJyMikge1xyXG4gICAgICAgICAgICAgICAgICAgIGNvbnNvbGUuZXJyb3IoXHJcbiAgICAgICAgICAgICAgICAgICAgXCJ7XFxuXCIgKyBcclxuICAgICAgICAgICAgICAgICAgICBcIiAgICB7XFxuXCIgKyBcclxuICAgICAgICAgICAgICAgICAgICBcIiAgICAgICAgIyMjIEVSUk9SIDE6XFxuXCIgKyBcclxuICAgICAgICAgICAgICAgICAgICBcIiAgICAgICAgXCIgKyBlcnIgKyBcIlxcblwiICsgXHJcbiAgICAgICAgICAgICAgICAgICAgXCIgICAgICAgICMjIyBFUlJPUiAyOlxcblwiICsgXHJcbiAgICAgICAgICAgICAgICAgICAgXCIgICAgICAgIFwiICsgZXJyMiArIFwiXFxuXCIgKyBcclxuICAgICAgICAgICAgICAgICAgICBcIiAgICB9XFxuXCIgKyBcclxuICAgICAgICAgICAgICAgICAgICBcIn1cIlxyXG4gICAgICAgICAgICAgICAgICAgICk7XHJcbiAgICAgICAgICAgICAgICB9XHJcbiAgICAgICAgICAgIH1cclxuXHJcbiAgICAgICAgICAgIHRoaXMuY29tcG9uZW50cy5zZXQobmFtZSwgY29tLkNyZWF0ZShuYW1lKSk7XHJcbiAgICAgICAgICAgIHJldHVybiBKU09OLnN0cmluZ2lmeSh7IGNvbU5hbWU6IG5hbWUsIGNvZGU6IFwiY3JlYXRlZFwiIH0pO1xyXG4gICAgICAgIH0gY2F0Y2ggKGVycikge1xyXG4gICAgICAgICAgICBjb25zb2xlLmVycm9yKFwiQ29tcG9uZW50TWFuYWdlcjogQ3JlYXRlKCkgLT4gQ291bGQgbm90IGNyZWF0ZSBjb21wb25lbnQgW1wiICsgbmFtZSArIFwiXSBvZiB0eXBlIDxcIiArIHR5cGUgKyBcIj4hXFxuXCIgKyBcclxuICAgICAgICAgICAgXCJFbnN1cmUgeW91IGRpZCBub3QgbWlzdHlwZSB0aGUgc3RyaW5nIGZvciB0aGUgPHR5cGU+IHBhcmFtZXRlci4gQWxzbyBtYWtlIHN1cmUgdGhlIGNvbXBvbmVudCB0eXBlIGJlaW5nIHJlZmVyZW5jZWQgXFxuXCIgKyBcclxuICAgICAgICAgICAgXCJleGlzdHMgdW5kZXIgJy4vY29tcG9uZW50cy8qLnRzJyBhbmQgbm90IGluIGEgZGlmZmVyZW50IGZvbGRlciBhcyB3ZWxsIGFzIG5vdCBpbiBhIHN1YmZvbGRlci5cXG5cIiArIFxyXG4gICAgICAgICAgICBcIiMjIyBFUlJPUjpcXG5cIiArIGVycik7XHJcbiAgICAgICAgICAgIHJldHVybiBKU09OLnN0cmluZ2lmeSh7IGNvbU5hbWU6IG5hbWUsIGNvZGU6IFwiZXJyb3JcIiB9KTtcclxuICAgICAgICB9XHJcbiAgICB9XHJcblxyXG4gICAgLyoqXHJcbiAgICAgKiBBZGQgYW4gZXh0ZXJuYWxseSBjcmVhdGVkIGNvbXBvbmVudC5cclxuICAgICAqXHJcbiAgICAgKiBAcGFyYW0ge0NvbXBvbmVudH0gY29tcG9uZW50XHJcbiAgICAgKiBAcmV0dXJuIHsqfSAge2Jvb2xlYW59XHJcbiAgICAgKiBAbWVtYmVyb2YgQ29tcG9uZW50TWFuYWdlclxyXG4gICAgICovXHJcbiAgICBwdWJsaWMgQWRkKGNvbXBvbmVudDogQ29tcG9uZW50KTogYm9vbGVhbiB7XHJcbiAgICAgICAgdHJ5IHtcclxuICAgICAgICAgICAgaWYgKHRoaXMuY29tcG9uZW50cy5oYXMoY29tcG9uZW50LlZHZXROYW1lKCkpKSB7XHJcbiAgICAgICAgICAgICAgICBjb25zb2xlLmVycm9yKFwiQ29tcG9uZW50TWFuYWdlcjogQWRkKCkgLT4gQ291bGQgbm90IGFkZCBjb21wb25lbnQgW1wiICsgY29tcG9uZW50LlZHZXROYW1lKCkgKyBcIl0gb2YgdHlwZSA8XCIgKyBjb21wb25lbnQuVkdldFR5cGUoKSArIFwiPiFcXG5cIiArIFxyXG4gICAgICAgICAgICAgICAgXCJBIGNvbXBvbmVudCB3aXRoIHRoYXQgbmFtZSBhbHJlYWR5IGV4aXN0cy5cIik7XHJcbiAgICAgICAgICAgICAgICByZXR1cm4gZmFsc2U7XHJcbiAgICAgICAgICAgIH1cclxuXHJcbiAgICAgICAgICAgIHRoaXMuY29tcG9uZW50cy5zZXQoY29tcG9uZW50LlZHZXROYW1lKCksIGNvbXBvbmVudCk7XHJcbiAgICAgICAgICAgIHJldHVybiB0cnVlO1xyXG4gICAgICAgIH0gY2F0Y2ggKGVycikge1xyXG4gICAgICAgICAgICBjb25zb2xlLmVycm9yKFwiQ29tcG9uZW50TWFuYWdlcjogQWRkKCkgLT4gQ291bGQgbm90IGFkZCBjb21wb25lbnQgW1wiICsgY29tcG9uZW50LlZHZXROYW1lKCkgKyBcIl0gb2YgdHlwZSA8XCIgKyBjb21wb25lbnQuVkdldFR5cGUoKSArIFwiPiFcXG5cIiArIFxyXG4gICAgICAgICAgICBcIiMjIyBFUlJPUjpcXG5cIiArIGVycik7XHJcbiAgICAgICAgICAgIHJldHVybiBmYWxzZTtcclxuICAgICAgICB9XHJcbiAgICB9XHJcblxyXG4gICAgLyoqXHJcbiAgICAgKiBSZW1vdmUgYSBjb21wb25lbnQgYnkgbmFtZS5cclxuICAgICAqXHJcbiAgICAgKiBAcGFyYW0ge3N0cmluZ30gbmFtZVxyXG4gICAgICogQHJldHVybiB7Kn0gIHtib29sZWFufVxyXG4gICAgICogQG1lbWJlcm9mIENvbXBvbmVudE1hbmFnZXJcclxuICAgICAqL1xyXG4gICAgcHVibGljIFJlbW92ZShuYW1lOiBzdHJpbmcpOiBib29sZWFuIHtcclxuICAgICAgICB0cnkge1xyXG4gICAgICAgICAgICBpZiAoIXRoaXMuY29tcG9uZW50cy5oYXMobmFtZSkpIHtcclxuICAgICAgICAgICAgICAgIGNvbnNvbGUuZXJyb3IoXCJDb21wb25lbnRNYW5hZ2VyOiBSZW1vdmUoKSAtPiBDb3VsZCBub3QgcmVtb3ZlIGNvbXBvbmVudCBbXCIgKyBuYW1lICsgXCJdIVxcblwiICsgXHJcbiAgICAgICAgICAgICAgICBcIkEgY29tcG9uZW50IHdpdGggdGhhdCBuYW1lIGRvZXMgbm90IGV4aXN0LlwiKTtcclxuICAgICAgICAgICAgICAgIHJldHVybiBmYWxzZTtcclxuICAgICAgICAgICAgfVxyXG5cclxuICAgICAgICAgICAgcmV0dXJuIHRoaXMuY29tcG9uZW50cy5kZWxldGUobmFtZSk7XHJcbiAgICAgICAgfSBjYXRjaCAoZXJyKSB7XHJcbiAgICAgICAgICAgIGNvbnNvbGUuZXJyb3IoXCJDb21wb25lbnRNYW5hZ2VyOiBSZW1vdmUoKSAtPiBDb3VsZCBub3QgcmVtb3ZlIGNvbXBvbmVudCBbXCIgKyBuYW1lICsgXCJdIVxcblwiICsgXHJcbiAgICAgICAgICAgIFwiIyMjIEVSUk9SOlxcblwiICsgZXJyKTtcclxuICAgICAgICAgICAgcmV0dXJuIGZhbHNlO1xyXG4gICAgICAgIH1cclxuICAgIH1cclxuXHJcbiAgICAvKipcclxuICAgICAqIENsZWFyIGFsbCBjb21wb25lbnRzLlxyXG4gICAgICogQmUgY2FyZWZ1bCB3aXRoIHRoaXMuIE1ha2Ugc3VyZSBhbGwgY29tcG9uZW50cyBoYXZlIGJlZW4gcHJvcGVybHkgc2h1dGRvd24uXHJcbiAgICAgKlxyXG4gICAgICogQHJldHVybiB7Kn0gIHt2b2lkfVxyXG4gICAgICogQG1lbWJlcm9mIENvbXBvbmVudE1hbmFnZXJcclxuICAgICAqL1xyXG4gICAgcHVibGljIENsZWFyKCk6IHZvaWQge1xyXG4gICAgICAgIGlmICh0aGlzLmNvbXBvbmVudHMuc2l6ZSA+IDApIHtcclxuICAgICAgICAgICAgdGhpcy5jb21wb25lbnRzLmNsZWFyKCk7XHJcbiAgICAgICAgICAgIHJldHVybjtcclxuICAgICAgICB9XHJcblxyXG4gICAgICAgIGNvbnNvbGUud2FybihcIkNvbXBvbmVudE1hbmFnZXI6IFJlbW92ZSgpIC0+IE5vIGNvbXBvbmVudHMgdG8gY2xlYXIhIEknbSBlbXB0eSFcIik7XHJcbiAgICB9XHJcbiAgICAvLyNlbmRyZWdpb25cclxuXHJcbiAgICAvLyNyZWdpb24gQ29udHJvbCBNZXRob2RzXHJcbiAgICAvKipcclxuICAgICAqIEluaXRpYWxpemUgYWxsIGNvbXBvbmVudHMgdGhhdCBoYXZlIG5vdCBiZWVuIGluaXRpYWxpemVkIG9yIG5lZWQgdG8gYmUgcmVpbml0aWFsaXplZFxyXG4gICAgICpcclxuICAgICAqIEBtZW1iZXJvZiBDb21wb25lbnRNYW5hZ2VyXHJcbiAgICAgKi9cclxuICAgIHB1YmxpYyBJbml0KCk6IHZvaWQge1xyXG4gICAgICAgIGlmICh0aGlzLmNvbXBvbmVudHMuc2l6ZSA+IDApIHtcclxuICAgICAgICAgICAgdGhpcy5jb21wb25lbnRzLmZvckVhY2goY29tID0+IHtcclxuICAgICAgICAgICAgICAgIGlmIChjb20uUmVJbml0ID09PSB0cnVlKSB7XHJcbiAgICAgICAgICAgICAgICAgICAgaWYgKCFjb20uVkluaXQoKSkge1xyXG4gICAgICAgICAgICAgICAgICAgICAgICBjb25zb2xlLmVycm9yKFwiQ29tcG9uZW50TWFuYWdlcjogSW5pdCgpIC0+IGNvdWxkIG5vdCBpbml0aWFsaXplIGNvbXBvbmVudCBbXCIgKyBjb20uVkdldE5hbWUoKSArIFwiXSBvZiB0eXBlIDxcIiArIGNvbS5WR2V0VHlwZSgpICsgXCI+IVwiKTtcclxuICAgICAgICAgICAgICAgICAgICB9XHJcbiAgICAgICAgICAgICAgICB9XHJcbiAgICAgICAgICAgIH0pO1xyXG4gICAgICAgIH1cclxuICAgIH1cclxuXHJcbiAgICAvKipcclxuICAgICAqIFVwZGF0ZSBhbGwgaW5pdGlhbGl6ZWQgY29tcG9uZW50cy5cclxuICAgICAqXHJcbiAgICAgKiBAbWVtYmVyb2YgQ29tcG9uZW50TWFuYWdlclxyXG4gICAgICovXHJcbiAgICBwdWJsaWMgVXBkYXRlKCk6IHZvaWQge1xyXG4gICAgICAgIGlmICh0aGlzLmNvbXBvbmVudHMuc2l6ZSA+IDApIHtcclxuICAgICAgICAgICAgdGhpcy5jb21wb25lbnRzLmZvckVhY2goY29tID0+IHtcclxuICAgICAgICAgICAgICAgIHRyeSB7XHJcbiAgICAgICAgICAgICAgICAgICAgaWYgKGNvbS5Jc0luaXRpYWxpemVkKSB7XHJcbiAgICAgICAgICAgICAgICAgICAgICAgIGNvbS5WVXBkYXRlKCk7XHJcbiAgICAgICAgICAgICAgICAgICAgfVxyXG4gICAgICAgICAgICAgICAgfSBjYXRjaCAoZXJyKSB7XHJcbiAgICAgICAgICAgICAgICAgICAgY29uc29sZS5lcnJvcihcIkNvbXBvbmVudE1hbmFnZXI6IFVwZGF0ZSgpIC0+IGNvdWxkIG5vdCB1cGRhdGUgY29tcG9uZW50IFtcIiArIGNvbS5WR2V0TmFtZSgpICsgXCJdIG9mIHR5cGUgPFwiICsgY29tLlZHZXRUeXBlKCkgKyBcIj4hXFxuXCIgKyBcclxuICAgICAgICAgICAgICAgICAgICBcIiMjIyBFUlJPUjpcXG5cIiArIGVycik7XHJcbiAgICAgICAgICAgICAgICB9XHJcbiAgICAgICAgICAgIH0pO1xyXG4gICAgICAgIH1cclxuICAgIH1cclxuXHJcbiAgICAvKipcclxuICAgICAqIFNodXRkb3duIGNvbXBvbmVudHMgbWFya2VkIGZvciB0ZXJtaW5hdGlvbi5cclxuICAgICAqXHJcbiAgICAgKiBAbWVtYmVyb2YgQ29tcG9uZW50TWFuYWdlclxyXG4gICAgICovXHJcbiAgICBwdWJsaWMgU2h1dGRvd24oKTogdm9pZCB7XHJcbiAgICAgICAgaWYgKHRoaXMuY29tcG9uZW50cy5zaXplID4gMCkge1xyXG4gICAgICAgICAgICB0aGlzLmNvbXBvbmVudHMuZm9yRWFjaChjb20gPT4ge1xyXG4gICAgICAgICAgICAgICAgdHJ5IHtcclxuICAgICAgICAgICAgICAgICAgICBpZiAoY29tLlNodXRkb3duUmVxdWVzdGVkKCkgPT09IHRydWUpIHtcclxuICAgICAgICAgICAgICAgICAgICAgICAgY29tLlZTaHV0ZG93bigpO1xyXG4gICAgICAgICAgICAgICAgICAgIH1cclxuICAgICAgICAgICAgICAgIH0gY2F0Y2ggKGVycikge1xyXG4gICAgICAgICAgICAgICAgICAgIGNvbnNvbGUuZXJyb3IoXCJDb21wb25lbnRNYW5hZ2VyOiBTaHV0ZG93bigpIC0+IGNvdWxkIG5vdCBzaHV0ZG93biBjb21wb25lbnQgW1wiICsgY29tLlZHZXROYW1lKCkgKyBcIl0gb2YgdHlwZSA8XCIgKyBjb20uVkdldFR5cGUoKSArIFwiPiFcXG5cIiArIFxyXG4gICAgICAgICAgICAgICAgICAgIFwiIyMjIEVSUk9SOlxcblwiICsgZXJyKTtcclxuICAgICAgICAgICAgICAgIH1cclxuICAgICAgICAgICAgfSk7XHJcbiAgICAgICAgfVxyXG4gICAgfVxyXG4gICAgLy8jZW5kcmVnaW9uXHJcbn0iXX0=</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-actors_actor-factory.html">actors/actor-factory</a></li><li><a href="module-components_component.html">components/component</a></li><li><a href="module-components_component-manager.html">components/component-manager</a></li><li><a href="module-components_types_renderer.html">components/types/renderer</a></li><li><a href="module-game-logic_base-game-logic.html">game-logic/base-game-logic</a></li><li><a href="module-game-logic_game-state-interface.html">game-logic/game-state-interface</a></li><li><a href="module-game-logic_game-state-manager.html">game-logic/game-state-manager</a></li><li><a href="module-game-views_game-view-interface.html">game-views/game-view-interface</a></li><li><a href="module-game-views_game-view-manager.html">game-views/game-view-manager</a></li><li><a href="module-game-views_types_human-view.html">game-views/types/human-view</a></li><li><a href="module-game_game-core.html">game/game-core</a></li><li><a href="module-system_system-dialog.html">system/system-dialog</a></li></ul><h3>Classes</h3><ul><li><a href="ActorFactory.ActorFactory.html">ActorFactory</a></li><li><a href="BaseGameLogic.BaseGameLogic.html">BaseGameLogic</a></li><li><a href="Component.Component.html">Component</a></li><li><a href="ComponentManager.ComponentManager.html">ComponentManager</a></li><li><a href="GameCore.GameCore.html">GameCore</a></li><li><a href="HumanView.HumanView.html">HumanView</a></li><li><a href="module-actors_actor-factory-ActorFactory.html">ActorFactory</a></li><li><a href="module-components_component-manager-ComponentManager.html">ComponentManager</a></li><li><a href="module-components_component-Component.html">Component</a></li><li><a href="module-components_types_renderer-Renderer.html">Renderer</a></li><li><a href="module-game-logic_base-game-logic-BaseGameLogic.html">BaseGameLogic</a></li><li><a href="module-game-logic_game-state-manager-StateManager.html">StateManager</a></li><li><a href="module-game-views_game-view-manager-ViewManager.html">ViewManager</a></li><li><a href="module-game-views_types_human-view-HumanView.html">HumanView</a></li><li><a href="module-game_game-core-GameCore.html">GameCore</a></li><li><a href="module-system_system-dialog-SystemDialog.html">SystemDialog</a></li><li><a href="Renderer.Renderer.html">Renderer</a></li><li><a href="StateManager.StateManager.html">StateManager</a></li><li><a href="SystemDialog.SystemDialog.html">SystemDialog</a></li><li><a href="ViewManager.ViewManager.html">ViewManager</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Mon Oct 19 2020 19:25:13 GMT-0500 (Central Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
