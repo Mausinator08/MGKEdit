@@ -14,21 +14,21 @@
     "inlineSourceMap": true,
     "inlineSources": true,
     "skipLibCheck": true,
-    "outDir": "app",
-    "baseUrl": ".",
+    "outDir": "./app",
+    "baseUrl": "./",
     "paths": {
       "*": [
         "*",
         "node_modules/*",
-        "../MGKFrameworkJS/*"
+        "../Framework/*"
       ]
     },
     "rootDir": "../",
-    "sourceRoot": "D:\\repos\\MGKEdit\\..\\"
+    "sourceRoot": "../"
   },
   "include": [
-    "src/**/*",
-    "../MGKFrameworkJS/src/**/*"
+    "../Editor/**/*",
+    "../Framework/**/*"
   ],
   "types": [
     "babylonjs"

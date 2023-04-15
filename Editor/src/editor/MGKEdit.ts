@@ -1,8 +1,8 @@
 /** @module editor/MGKEdit */
 
 //#region Imports
-import { Renderer } from "./../../../MGKFrameworkJS/src/components/types/renderer";
-import { GameCore, OnDOMContentLoaded } from "./../../../MGKFrameworkJS/src/game/game-core";
+import { Renderer } from "./../../../Framework/src/components/types/renderer";
+import { GameCore, OnDOMContentLoaded } from "./../../../Framework/src/game/game-core";
 import { MGKEditLogic } from "./../editor-logic/MGKEdit-Logic";
 //#endregion
 

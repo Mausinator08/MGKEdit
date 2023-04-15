@@ -1,8 +1,8 @@
 /** @module editor/MGKEdit */
 
 //#region Imports
-import { Renderer } from "./../../../MGKFrameworkJS/src/components/types/renderer";
-import { GameCore } from "./../../../MGKFrameworkJS/src/game/game-core";
+import { Renderer } from "./../../../Framework/src/components/types/renderer";
+import { GameCore } from "./../../../Framework/src/game/game-core";
 //#endregion
 
 export class BabylonJSRenderer extends Renderer {

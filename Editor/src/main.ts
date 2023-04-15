@@ -6,7 +6,6 @@ import * as remoteMain from "@electron/remote/main";
 remoteMain.initialize();
 import * as path from "path";
 import * as url from "url";
-import { Texture } from "babylonjs";
 
 // Uncomment the following line later when ini settings files are being used.
 // import * as ini from "multi-ini";

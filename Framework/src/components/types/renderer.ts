@@ -62,7 +62,7 @@ export class Renderer extends Component {
      * @type {Map<string, string>}
      * @memberof Renderer
      */
-    public args: Map<string, string> = null;
+    public args: Map<string, string> = new Map<string, string>();
     //#endregion
 
     /**

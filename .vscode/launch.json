@@ -15,32 +15,32 @@
             "name": "Debug main process",
             "type": "node",
             "request": "launch",
-            "program": "${workspaceFolder}/app/MGKEdit/src/main.js",
+            "program": "${workspaceFolder}/Editor/app/Editor/src/main.js",
             "stopOnEntry": false,
             "args": [
-                "${workspaceFolder}/src/**/*.ts",
-                "${workspaceFolder}/../MGKFrameworkJS/src/**/*.ts"
+                "${workspaceFolder}/Editor/src/**/*.ts",
+                "${workspaceFolder}/Framework/src/**/*.ts"
             ],
             "runtimeArgs": [
                 "--enable-logging",
                 "--remote-debugging-port=9222",
                 "--inspect=5858"
             ],
-            "cwd": "${workspaceFolder}/app",
+            "cwd": "${workspaceFolder}/Editor/app",
             "protocol": "inspector",
-            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
+            "runtimeExecutable": "${workspaceFolder}/Editor/node_modules/.bin/electron",
             "sourceMaps": true,
             "outFiles": [
-                "${workspaceFolder}/app/**/*.js"
+                "${workspaceFolder}/Editor/app/**/*.js"
             ],
             "smartStep": true,
             "console": "integratedTerminal",
             "skipFiles": [
-                "${workspaceFolder}/node_modules/**/*",
+                "${workspaceFolder}/Editor/node_modules/**/*",
                 "<node_internals>/**/*"
             ],
             "windows": {
-                "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd",
+                "runtimeExecutable": "${workspaceFolder}/Editor/node_modules/.bin/electron.cmd",
                 "runtimeArgs": [
                     "--enable-logging",
                     "--remote-debugging-port=9222",
@@ -53,17 +53,17 @@
             "type": "chrome",
             "request": "attach",
             "pathMapping": {
-                "${workspaceFolder}/app/MGKEdit/src/**/*.js": "${workspaceFolder}/src/**/*.ts",
-                "${workspaceFolder}/app/MGKFrameworkJS/src/**/*.js": "${workspaceFolder}/../MGKFrameworkJS/src/**/*.ts"
+                "${workspaceFolder}/Editor/app/Editor/src/**/*.js": "${workspaceFolder}/Editor/src/**/*.ts",
+                "${workspaceFolder}/Editor/app/Framework/src/**/*.js": "${workspaceFolder}/Framework/src/**/*.ts"
             },
             "outFiles": [
-                "${workspaceFolder}/app/**/*.js"
+                "${workspaceFolder}/Editor/app/**/*.js"
             ],
             "port": 9222,
-            "url": "file:///${workspaceFolder}/app/MGKEdit/content/index.html",
+            "url": "file:///${workspaceFolder}/Editor/app/Editor/content/index.html",
             "sourceMaps": true,
             "smartStep": true,
-            "webRoot": "${workspaceFolder}/app",
+            "webRoot": "${workspaceFolder}/Editor/app",
             "internalConsoleOptions": "openOnSessionStart",
             "timeout": 10000,
             "targetTypes": [
@@ -71,7 +71,7 @@
                 "webview"
             ],
             "skipFiles": [
-                "${workspaceFolder}/node_modules/**/*",
+                "${workspaceFolder}/Editor/node_modules/**/*",
                 "<node_internals>/**/*"
             ]
         }

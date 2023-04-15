@@ -1,8 +1,8 @@
 /** @module editor-logic/MGKEdit-Logic */
 
 //#region Imports
-import { HumanView } from "./../../../MGKFrameworkJS/src/game-views/types/human-view";
-import { BaseGameLogic } from "./../../../MGKFrameworkJS/src/game-logic/base-game-logic";
+import { HumanView } from "./../../../Framework/src/game-views/types/human-view";
+import { BaseGameLogic } from "./../../../Framework/src/game-logic/base-game-logic";
 //#endregion
 
 //#region MGKEditLogic Global Methods
