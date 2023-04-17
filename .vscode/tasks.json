@@ -6,7 +6,7 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "npm --prefix ${workspaceFolder}/Editor/ run build"
+            "command": "npm run build"
         }
     ]
 }

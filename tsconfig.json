@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "target": "ESNext",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "lib": [
+      "ES2022",
+      "dom"
+    ],
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "skipLibCheck": true,
+    "outDir": "./app",
+    "baseUrl": "./",
+    "paths": {
+      "*": [
+        "*",
+        "node_modules/*",
+      ]
+    },
+    "rootDir": "./",
+    "sourceRoot": "./",
+    "types": [
+      "babylonjs",
+      "node"
+    ]
+  },
+  "include": [
+    "./src/**/*"
+  ]
+}

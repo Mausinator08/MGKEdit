@@ -1,0 +1,93 @@
+{
+  "name": "mgkedit",
+  "version": "1.0.0",
+  "description": "Game editor using MGKFrameworkJS.",
+  "main": "./app/src/Editor/main.js",
+  "scripts": {
+    "postinstall": "electron-builder install-app-deps",
+    "dist-win": "electron-builder -p never --win",
+    "pack": "electron-builder build --dir",
+    "build": "node \".\\pre-build.js\" && tsc --build --verbose && node \".\\post-build.js\"",
+    "dry-build": "node \".\\pre-build.js\" && tsc --build --dry --verbose",
+    "clean": "node \".\\pre-build.js\" && tsc --build --clean && del /F /S /Q \".\\app\\*\"",
+    "dry-clean": "node \".\\pre-build.js\" && tsc --build --clean --dry",
+    "rebuild": "node \".\\pre-build.js\" && tsc --build --clean && del /F /S /Q \".\\app\\*\" && tsc --build --verbose && node \".\\post-build.js\"",
+    "watch": "node \".\\pre-build.js\" && tsc --build --watch --verbose && node \".\\post-build.js\"",
+    "start": "electron ./app/Editor/main.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "trace": "tsc --traceResolution"
+  },
+  "repository": "git@github.com:Mausinator08/MGKEdit.git",
+  "author": "John Patrick Maus",
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "private": true,
+  "build": {
+    "appId": "com.mausinator-games.mgkedit",
+    "productName": "MGK Edit",
+    "copyright": "Copyright © 2020 Mausinator Games, all rights reserved.",
+    "win": {
+      "target": [
+        {
+          "arch": [
+            "x64",
+            "ia32"
+          ],
+          "target": "nsis"
+        }
+      ],
+      "publisherName": "Mausinator Games",
+      "publish": "github"
+    },
+    "linux": {
+      "target": [
+        {
+          "arch": [
+            "x64",
+            "ia32"
+          ],
+          "target": [
+            "AppImage",
+            "tar.gz"
+          ]
+        }
+      ],
+      "publisherName": "Mausinator Games",
+      "publish": "github"
+    },
+    "mac": {
+      "target": [
+        {
+          "arch": [
+            "x64",
+            "ia32"
+          ],
+          "target": "zip"
+        }
+      ],
+      "publisherName": "Mausinator Games",
+      "publish": "github"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "dmg": {
+      "icon": "./build/icon.icns"
+    }
+  },
+  "dependencies": {
+    "@electron/remote": "^2.0.9",
+    "babylonjs": "^5.40.0",
+    "multi-ini": "^2.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^18.15.11",
+    "electron": "^22.0.0",
+    "electron-builder": "^23.6.0",
+    "jsdoc": "^4.0.0",
+    "jsdoc-plugin-typescript": "^2.2.0",
+    "typedoc": "^0.23.23",
+    "typescript": "^5.0.4"
+  }
+}

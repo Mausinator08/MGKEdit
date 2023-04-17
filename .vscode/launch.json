@@ -15,32 +15,32 @@
             "name": "Debug main process",
             "type": "node",
             "request": "launch",
-            "program": "${workspaceFolder}/Editor/app/Editor/src/main.js",
+            "program": "${workspaceFolder}/app/src/Editor/main.js",
             "stopOnEntry": false,
             "args": [
-                "${workspaceFolder}/Editor/src/**/*.ts",
-                "${workspaceFolder}/Framework/src/**/*.ts"
+                "${workspaceFolder}/src/Editor/**/*.ts",
+                "${workspaceFolder}/src/Framework/**/*.ts"
             ],
             "runtimeArgs": [
                 "--enable-logging",
                 "--remote-debugging-port=9222",
                 "--inspect=5858"
             ],
-            "cwd": "${workspaceFolder}/Editor/app",
+            "cwd": "${workspaceFolder}/app/src/",
             "protocol": "inspector",
-            "runtimeExecutable": "${workspaceFolder}/Editor/node_modules/.bin/electron",
+            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
             "sourceMaps": true,
             "outFiles": [
-                "${workspaceFolder}/Editor/app/**/*.js"
+                "${workspaceFolder}/app/**/*.js"
             ],
             "smartStep": true,
             "console": "integratedTerminal",
             "skipFiles": [
-                "${workspaceFolder}/Editor/node_modules/**/*",
+                "${workspaceFolder}/node_modules/**/*",
                 "<node_internals>/**/*"
             ],
             "windows": {
-                "runtimeExecutable": "${workspaceFolder}/Editor/node_modules/.bin/electron.cmd",
+                "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd",
                 "runtimeArgs": [
                     "--enable-logging",
                     "--remote-debugging-port=9222",
@@ -53,17 +53,17 @@
             "type": "chrome",
             "request": "attach",
             "pathMapping": {
-                "${workspaceFolder}/Editor/app/Editor/src/**/*.js": "${workspaceFolder}/Editor/src/**/*.ts",
-                "${workspaceFolder}/Editor/app/Framework/src/**/*.js": "${workspaceFolder}/Framework/src/**/*.ts"
+                "${workspaceFolder}/app/src/Editor/**/*.js": "${workspaceFolder}/src/Editor/**/*.ts",
+                "${workspaceFolder}/app/src/Framework/**/*.js": "${workspaceFolder}/src/Framework/**/*.ts"
             },
             "outFiles": [
-                "${workspaceFolder}/Editor/app/**/*.js"
+                "${workspaceFolder}/app/**/*.js"
             ],
             "port": 9222,
-            "url": "file:///${workspaceFolder}/Editor/app/Editor/content/index.html",
+            "url": "file:///${workspaceFolder}/app/src/Editor/content/index.html",
             "sourceMaps": true,
             "smartStep": true,
-            "webRoot": "${workspaceFolder}/Editor/app",
+            "webRoot": "${workspaceFolder}/app",
             "internalConsoleOptions": "openOnSessionStart",
             "timeout": 10000,
             "targetTypes": [
@@ -71,7 +71,7 @@
                 "webview"
             ],
             "skipFiles": [
-                "${workspaceFolder}/Editor/node_modules/**/*",
+                "${workspaceFolder}/node_modules/**/*",
                 "<node_internals>/**/*"
             ]
         }
