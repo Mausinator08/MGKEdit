@@ -60,7 +60,7 @@
                 "${workspaceFolder}/app/**/*.js"
             ],
             "port": 9222,
-            "url": "file:///${workspaceFolder}/app/src/Editor/content/index.html",
+            "url": "file:///${workspaceFolder}/app/content/index.html",
             "sourceMaps": true,
             "smartStep": true,
             "webRoot": "${workspaceFolder}/app",

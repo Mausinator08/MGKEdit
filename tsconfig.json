@@ -22,7 +22,6 @@
       ]
     },
     "rootDir": "./",
-    "sourceRoot": "./",
     "types": [
       "babylonjs",
       "node"

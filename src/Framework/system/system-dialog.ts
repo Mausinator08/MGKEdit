@@ -82,7 +82,7 @@ export class SystemDialog {
         let heading: HTMLHeadingElement = document.createElement("h1");
         let quitMsg: HTMLHeadingElement = document.createElement("h2");
 
-        heading.setAttribute("style", "color: purple;");
+        heading.setAttribute("style", "color: blue;");
         heading.innerHTML = "QUITTING?";
         quitMsg.setAttribute("style", "color: white;");
         quitMsg.innerHTML = "Are you sure that you want to quit?";
@@ -92,7 +92,7 @@ export class SystemDialog {
 
         yesButton.innerHTML = "YES";
         yesButton.setAttribute("id", "btnQuitYes");
-        yesButton.setAttribute("style", "color: green; background-color: rgba(80, 80, 80, 80); border-width: 2pt; border-style: solid; border-color: green; border-radius: 2pt; font-size: 14pt;");
+        yesButton.setAttribute("style", "color: blue; background-color: rgba(80, 80, 80, 80); border-width: 2pt; border-style: solid; border-color: blue; border-radius: 2pt; font-size: 14pt; margin: 8pt;");
         yesButton.addEventListener(
             "click", 
             function (event: MouseEvent) {
@@ -102,7 +102,7 @@ export class SystemDialog {
         
         noButton.innerHTML = "NO";
         noButton.setAttribute("id", "btnQuitNo");
-        noButton.setAttribute("style", "color: red; background-color: rgba(80, 80, 80, 80); border-width: 2pt; border-style: solid; border-color: red; border-radius: 2pt; font-size: 14pt;");
+        noButton.setAttribute("style", "color: red; background-color: rgba(80, 80, 80, 80); border-width: 2pt; border-style: solid; border-color: red; border-radius: 2pt; font-size: 14pt; margin: 8pt;");
         noButton.addEventListener(
             "click", 
             function (event: MouseEvent) {
