@@ -78,16 +78,16 @@
   },
   "dependencies": {
     "@electron/remote": "^2.0.9",
-    "babylonjs": "^5.40.0",
+    "babylonjs": "^6.2.0",
     "multi-ini": "^2.3.2"
   },
   "devDependencies": {
-    "@types/node": "^18.15.11",
-    "electron": "^22.0.0",
+    "@types/node": "^20.1.1",
+    "electron": "^24.2.0",
     "electron-builder": "^23.6.0",
-    "jsdoc": "^4.0.0",
-    "jsdoc-plugin-typescript": "^2.2.0",
-    "typedoc": "^0.23.23",
+    "jsdoc": "^4.0.2",
+    "jsdoc-plugin-typescript": "^2.2.1",
+    "typedoc": "^0.24.7",
     "typescript": "^5.0.4"
   }
 }
