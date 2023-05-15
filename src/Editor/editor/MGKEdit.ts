@@ -24,7 +24,7 @@ function PreInit(game: GameCore): boolean {
                 switch(success.comName) {
                     case "babylon-js": {
                         // Renderer not supported... games need graphics!!!
-                        return false;                                
+                        return false;
                         break;
                     }
 
@@ -99,7 +99,7 @@ export class MGKEdit extends GameCore {
         if (this.reInit === true) {
             // Create componets here:
             if (this.createdComponents.length === 0) {
-                this.createdComponents.push(this.comMan.Create("babylon-js", "babylon-js-renderer")); // This one needs to be last!
+                this.createdComponents.push(this.comMan.Create("babylon-js", "renderer")); // This one needs to be last!
             }
 
             // Assign the pre init function so that GameCore can call it before calling comMan.Init();

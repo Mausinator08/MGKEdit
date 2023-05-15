@@ -109,7 +109,7 @@ export class ComponentManager {
      * @return {*}  {string}
      * @memberof ComponentManager
      */
-    public Create(name: string, type: string, args: Map<string, string> = new Map<string, string>()): string {
+    public Create(name: string, type: string, ...args: any): string {
         try {
             if (this.components.has(name)) {
                 console.error("ComponentManager: Create() -> Could not create component [" + name + "] of type <" + this.components.get(name).VGetType() + ">!\n" + 
@@ -123,7 +123,7 @@ export class ComponentManager {
                 com = require(this.comDir + "/" + type + ".js");
             } catch (err) {
                 try {
-                    com = require(__dirname + "/../components/" + type + ".js");
+                    com = require(__dirname + "/../components/types/" + type + ".js");
                 } catch (err2) {
                     console.error(
                     "{\n" + 
@@ -138,7 +138,7 @@ export class ComponentManager {
                 }
             }
 
-            this.components.set(name, com.Create(name, args));
+            this.components.set(name, com.Create(name, ...args));
             return JSON.stringify({ comName: name, code: "created" });
         } catch (err) {
             console.error("ComponentManager: Create() -> Could not create component [" + name + "] of type <" + type + ">!\n" + 

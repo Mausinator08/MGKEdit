@@ -56,13 +56,6 @@ export class Renderer extends Component {
      * @memberof Renderer
      */
     private runLoop: boolean = false;
-    /**
-     * Arguments passed from exported Create() function.
-     *
-     * @type {Map<string, string>}
-     * @memberof Renderer
-     */
-    public args: Map<string, string> = new Map<string, string>();
     //#endregion
 
     /**
@@ -70,9 +63,8 @@ export class Renderer extends Component {
      * @param {string} name
      * @memberof Renderer
      */
-    constructor(name: string, args: Map<string, string>) {
+    constructor(name: string) {
         super(name, "renderer");
-        this.args = args;
     }
 
     //#region Properties
@@ -281,6 +273,6 @@ export class Renderer extends Component {
  * @param {string} name
  * @return {*}  {Renderer}
  */
-export function Create(name: string, args: Map<string, string> = new Map<string, string>()): Renderer {
-    return new Renderer(name, args);
+export function Create(name: string, ...args: any): Renderer {
+    return new Renderer(name);
 }
